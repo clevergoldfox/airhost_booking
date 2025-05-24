@@ -10,6 +10,7 @@
  * unique to you with each update of SmartAdmin.
  */
 
+
 /*
  * INDEX
  * 
@@ -17,3 +18,42 @@
  * - BODY
  * - CUSTOM STYLES
  */
+ 
+ body {
+     overflow-x: hidden;
+ }
+ 
+ /* data table scroll-x-direction */
+ 
+#dt_basic_wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.dt-toolbar,
+.dt-toolbar-footer {
+    padding: 10px;
+    background: #f0f0f0;
+}
+
+#dt_basic {
+    white-space: nowrap;
+    width: max-content;
+    border-collapse: collapse;
+    width: 100%;
+    overflow-x: scroll;
+    display: block;
+    position: relative;
+}
+
+#dt_basic tr th:nth-of-type(1),
+td:nth-of-type(1) {
+    background-color: #eee;
+    position: sticky;
+    left: 0;
+}
+
+#dt_basic_paginate ul li:hover{
+    cursor: pointer;
+}

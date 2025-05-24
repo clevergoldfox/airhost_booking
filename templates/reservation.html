@@ -1,0 +1,309 @@
+{% include 'layout/header.html' %}
+
+{% include 'layout/topbar.html' %}
+
+{% include 'layout/sidebar.html' %}
+
+
+
+<!-- MAIN PANEL -->
+<div id="main" role="main">
+
+    <!-- RIBBON -->
+    <div id="ribbon">
+
+        <span class="ribbon-button-alignment">
+            <span id="refresh" class="btn btn-ribbon" data-action="resetWidgets" data-title="refresh" rel="tooltip"
+                data-placement="bottom"
+                data-original-title="<i class='text-warning fa fa-warning'></i> Warning! This will reset all your widget settings."
+                data-html="true">
+                <i class="fa fa-refresh"></i>
+            </span>
+        </span>
+
+        <!-- breadcrumb -->
+        <ol class="breadcrumb">
+            <li>Home</li>
+            <li>Miscellaneous</li>
+            <li>Blank Page</li>
+        </ol>
+        <!-- end breadcrumb -->
+
+        <!-- You can also add more buttons to the
+				ribbon for further usability
+
+				Example below:
+
+				<span class="ribbon-button-alignment pull-right">
+				<span id="search" class="btn btn-ribbon hidden-xs" data-title="search"><i class="fa-grid"></i> Change Grid</span>
+				<span id="add" class="btn btn-ribbon hidden-xs" data-title="add"><i class="fa-plus"></i> Add</span>
+				<span id="search" class="btn btn-ribbon" data-title="search"><i class="fa-search"></i> <span class="hidden-mobile">Search</span></span>
+				</span> -->
+
+    </div>
+    <!-- END RIBBON -->
+
+
+
+    <!-- MAIN CONTENT -->
+    <div id="content">
+
+        <!-- row -->
+        <div class="row">
+
+            <!-- col -->
+            <div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+                <h1 class="page-title txt-color-blueDark">
+
+                    <!-- PAGE HEADER -->
+                    <i class="fa-fw fa fa-home"></i>
+                    Page Header
+                    <span>>
+                        Subtitle
+                    </span>
+                </h1>
+            </div>
+            <!-- end col -->
+
+            <!-- right side of the page with the sparkline graphs -->
+            <!-- col -->
+            <div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
+                <!-- sparks -->
+                <ul id="sparks">
+                    <li class="sparks-info">
+                        <h5> My Income <span class="txt-color-blue">$47,171</span></h5>
+                        <div class="sparkline txt-color-blue hidden-mobile hidden-md hidden-sm">
+                            1300, 1877, 2500, 2577, 2000, 2100, 3000, 2700, 3631, 2471, 2700, 3631, 2471
+                        </div>
+                    </li>
+                    <li class="sparks-info">
+                        <h5> Site Traffic <span class="txt-color-purple"><i class="fa fa-arrow-circle-up"
+                                    data-rel="bootstrap-tooltip" title="Increased"></i>&nbsp;45%</span></h5>
+                        <div class="sparkline txt-color-purple hidden-mobile hidden-md hidden-sm">
+                            110,150,300,130,400,240,220,310,220,300, 270, 210
+                        </div>
+                    </li>
+                    <li class="sparks-info">
+                        <h5> Site Orders <span class="txt-color-greenDark"><i
+                                    class="fa fa-shopping-cart"></i>&nbsp;2447</span></h5>
+                        <div class="sparkline txt-color-greenDark hidden-mobile hidden-md hidden-sm">
+                            110,150,300,130,400,240,220,310,220,300, 270, 210
+                        </div>
+                    </li>
+                </ul>
+                <!-- end sparks -->
+            </div>
+            <!-- end col -->
+
+        </div>
+        <!-- end row -->
+
+        <!--
+					The ID "widget-grid" will start to initialize all widgets below 
+					You do not need to use widgets if you dont want to. Simply remove 
+					the <section></section> and you can use wells or panels instead 
+					-->
+
+        <!-- widget grid -->
+        <section id="widget-grid" class="">
+
+            <!-- row -->
+            <div class="row">
+
+                <!-- NEW WIDGET START -->
+                <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+
+                    <form id="datafile-form" class="smart-form" enctype="multipart/form-data">
+                        <button type="button" id="fileaddbtn" class="btn btn-success">+ add file</button>
+                        <input type="file" id="datafile" name="datafile" class="input-xs" style="display: none;" />
+                    </div>
+
+
+                    <!-- Widget ID (each widget will need unique ID)-->
+                    <div class="jarviswidget jarviswidget-color-darken" id="wid-id-0" data-widget-editbutton="false">
+                        <!-- widget options:
+								usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+				
+								data-widget-colorbutton="false"
+								data-widget-editbutton="false"
+								data-widget-togglebutton="false"
+								data-widget-deletebutton="false"
+								data-widget-fullscreenbutton="false"
+								data-widget-custombutton="false"
+								data-widget-collapsed="true"
+								data-widget-sortable="false"
+				
+								-->
+                        <header>
+                            <span class="widget-icon"> <i class="fa fa-table"></i> </span>
+                            <h2>Standard Data Tables </h2>
+
+                        </header>
+
+                        <!-- widget div-->
+                        <div>
+
+                            <!-- widget edit box -->
+                            <div class="jarviswidget-editbox">
+                                <!-- This area used as dropdown edit box -->
+
+                            </div>
+                            <!-- end widget edit box -->
+
+                            <!-- widget content -->
+                            <div class="widget-body no-padding">
+
+                                <table id="dt_basic" class="table table-striped table-bordered table-hover"
+                                    width="100%">
+                                    <thead>
+                                        <tr>
+                                            <th data-hide="phone">ID</th>
+                                            <th data-hide="phone">予約サイト</th>
+                                            <th data-hide="phone">チャンネル予約ID</th>
+                                            <th data-hide="phone">AirHost予約ID</th>
+                                            <th data-hide="phone">チェックイン</th>
+                                            <th data-hide="phone">チェックアウト</th>
+                                            <th data-hide="phone">物件名</th>
+                                            <th data-hide="phone">物件タグ</th>
+                                            <th data-hide="phone">部屋番号</th>
+                                            <th data-hide="phone">ゲスト名</th>
+                                            <th data-hide="phone">電話番号</th>
+                                            <th data-hide="phone">メールアドレス</th>
+                                            <th data-hide="phone">国籍</th>
+                                            <th data-hide="phone">ゲストアドレス</th>
+                                            <th data-hide="phone">状態</th>
+                                            <th data-hide="phone">チェックイン状態</th>
+                                            <th data-hide="phone">支払い済み</th>
+                                            <th data-hide="phone">ゲスト数</th>
+                                            <th data-hide="phone">合計日数</th>
+                                            <th data-hide="phone">予約日</th>
+                                            <th data-hide="phone">通貨</th>
+                                            <th data-hide="phone">販売</th>
+                                            <th data-hide="phone">OTA サービス料</th>
+                                            <th data-hide="phone">受取金</th>
+                                            <th data-hide="phone">支払済み（補助金/クーポン）</th>
+                                            <th data-hide="phone">OTA 決済</th>
+                                            <th data-hide="phone">クレジット</th>
+                                            <th data-hide="phone">現金</th>
+                                            <th data-hide="phone">未収</th>
+                                            <th data-hide="phone">クリーニング代</th>
+                                            <th data-hide="phone">サポート料金</th>
+                                            <th data-hide="phone">コメント</th>
+                                            <th data-hide="phone">料金プラン</th>
+                                            <th data-hide="phone">大人</th>
+                                            <th data-hide="phone">子供</th>
+                                            <th data-hide="phone">説明</th>
+                                            <th data-hide="phone">決済手数料</th>
+                                            <th data-hide="phone">キャンセル</th>
+                                            <th data-hide="phone">予約エンジンクーポン</th>
+                                            <th data-hide="phone">宿泊者名</th>
+                                            <th data-hide="phone">更新日時</th>
+                                            <th data-hide="phone">幼児</th>
+                                            <th data-hide="phone">PIN</th>
+                                            <!-- <th data-class="expand"><i
+                                                    class="fa fa-fw fa-user text-muted hidden-md hidden-sm hidden-xs"></i>
+                                                Name</th>
+                                            <th data-hide="phone"><i
+                                                    class="fa fa-fw fa-phone text-muted hidden-md hidden-sm hidden-xs"></i>
+                                                Phone</th>
+                                            <th>Company</th>
+                                            <th data-hide="phone,tablet"><i
+                                                    class="fa fa-fw fa-map-marker txt-color-blue hidden-md hidden-sm hidden-xs"></i>
+                                                Zip</th>
+                                            <th data-hide="phone,tablet">City</th>
+                                            <th data-hide="phone,tablet"><i
+                                                    class="fa fa-fw fa-calendar txt-color-blue hidden-md hidden-sm hidden-xs"></i>
+                                                Date</th> -->
+                                        </tr>
+                                    </thead>
+                                    <tbody id="reservation_data">
+                                        <tr>
+                                            <td>1</td>
+                                            <td>Booking.com</td>
+                                            <td>BC123456</td>
+                                            <td>AH789012</td>
+                                            <td>2024-05-20</td>
+                                            <td>2024-05-25</td>
+                                            <td>Sunset Villa</td>
+                                            <td>Beach</td>
+                                            <td>101</td>
+                                            <td>John Smith</td>
+                                            <td>+81-90-1234-5678</td>
+                                            <td>john@example.com</td>
+                                            <td>USA</td>
+                                            <td>123 Main St, New York</td>
+                                            <td>Confirmed</td>
+                                            <td>Not Checked In</td>
+                                            <td>Yes</td>
+                                            <td>2</td>
+                                            <td>5</td>
+                                            <td>2024-05-15</td>
+                                            <td>JPY</td>
+                                            <td>50000</td>
+                                            <td>5000</td>
+                                            <td>45000</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                            <td>0</td>
+                                            <td>3000</td>
+                                            <td>2000</td>
+                                            <td>No special requests</td>
+                                            <td>Standard</td>
+                                            <td>2</td>
+                                            <td>0</td>
+                                            <td>Regular stay</td>
+                                            <td>500</td>
+                                            <td>No</td>
+                                            <td>None</td>
+                                            <td>John Smith</td>
+                                            <td>2024-05-15 10:00:00</td>
+                                            <td>0</td>
+                                            <td>1234</td>
+                                        </tr>
+                                        <!-- Add more rows with similar structure as needed -->
+                                    </tbody>
+                                </table>
+                                
+                            </div>
+                            <!-- end widget content -->
+
+                        </div>
+                        <!-- end widget div -->
+
+                    </div>
+                    <!-- end widget -->
+
+                </article>
+                <!-- WIDGET END -->
+
+            </div>
+
+            <!-- end row -->
+
+            <!-- row -->
+
+            <div class="row">
+
+                <!-- a blank row to get started -->
+                <div class="col-sm-12">
+                    <!-- your contents here -->
+                </div>
+
+            </div>
+
+            <!-- end row -->
+
+        </section>
+        <!-- end widget grid -->
+
+    </div>
+    <!-- END MAIN CONTENT -->
+
+</div>
+<!-- END MAIN PANEL -->
+
+{% include 'layout/footer.html' %}
+
+{% include 'layout/scripts.html' %}

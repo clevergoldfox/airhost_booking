@@ -27,6 +27,26 @@ def index():
 def favicon():
     return send_from_directory('static', 'favicon.ico', mimetype='image/vnd.microsoft.icon')
 
+@flask_app.route('/reservation', methods=['GET', 'POST'])
+def reservation():
+    if request.method == 'POST':
+        file = request.files['datafile']
+
+        # Read CSV content
+        pre_data = []
+        file.stream.seek(0)  # reset file pointer
+        file_content = csv.reader(file.stream.read().decode('utf-8-sig').splitlines())
+        
+        # for row in csv_reader:
+            # print(row)
+
+        return jsonify({'status': 'success', 'data': list(file_content)})
+
+    return render_template('reservation.html')
+    if request.method == 'GET':
+        return render_template('reservation.html')
+
+
 @flask_app.route("/scrape", methods=['POST'])
 def scrape():
     # os.system('cls')
