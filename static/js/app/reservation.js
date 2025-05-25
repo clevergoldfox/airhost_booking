@@ -1,28 +1,59 @@
-var reservation_data = null;
+var reservation_data = JSON.parse(localStorage.getItem('reservationData'))||[];
 var activePage = 1;
 var pageSize = 10;
-var pageCount = 1;
+var pageCount = Math.ceil(reservation_data.length / pageSize);
 function draw_reservationTable(){
-    const reservation_table = $("#reservation_data");
+    const reservation_table = $("#dt_basic");
     reservation_table.empty();
-    console.log(activePage, pageSize);
-    
-    const startIndex = (activePage - 1) * pageSize;
-    const endIndex = startIndex + pageSize/1;
-    console.log(startIndex, endIndex);
-    
-    const tableData = reservation_data.slice(startIndex, endIndex);
-    console.log(tableData);
-    
     var htmlstr = "";
-    tableData.forEach((item, index) => {
-        htmlstr += "<tr>\
-        <td>" + (startIndex+ index + 1) + "</td>";
-        item.forEach((value, i) => {
-            htmlstr += "<td>" + value + "</td>"
+    if (reservation_data && reservation_data.length > 0) {
+        
+        const startIndex = (activePage - 1) * pageSize;
+        const endIndex = startIndex + pageSize/1;
+        const headData = reservation_data[0];
+        var htmlstr = "<thead><tr><th>No</th>";
+        headData.forEach((value, i) => {
+            htmlstr += "<th data-hide='phone'>" + value + "</th>";
         });
-        htmlstr += "</tr>";
-    });
+        htmlstr += "</tr></thead>";
+        const tableData = reservation_data.slice(1).slice(startIndex, endIndex);
+        console.log(tableData);
+        
+        tableData.forEach((item, index) => {
+            htmlstr += "<tbody><tr>\
+            <td>" + (startIndex+ index + 1) + "</td>";
+            item.forEach((value, i) => {
+                htmlstr += "<td>" + value + "</td>"
+            });
+            htmlstr += "</tr></tbody>";
+        });
+    } else {
+        htmlstr = `<thead>
+                    <tr>
+                        <th class="nodatathead" style="font-weight: 600; width: 100%; text-align: center;">資料を追加してください。</th>
+                        <!-- <th data-class="expand"><i
+                                class="fa fa-fw fa-user text-muted hidden-md hidden-sm hidden-xs"></i>
+                            Name</th>
+                        <th data-hide="phone"><i
+                                class="fa fa-fw fa-phone text-muted hidden-md hidden-sm hidden-xs"></i>
+                            Phone</th>
+                        <th>Company</th>
+                        <th data-hide="phone,tablet"><i
+                                class="fa fa-fw fa-map-marker txt-color-blue hidden-md hidden-sm hidden-xs"></i>
+                            Zip</th>
+                        <th data-hide="phone,tablet">City</th>
+                        <th data-hide="phone,tablet"><i
+                                class="fa fa-fw fa-calendar txt-color-blue hidden-md hidden-sm hidden-xs"></i>
+                            Date</th> -->
+                    </tr>
+                </thead>
+                <tbody id="reservation_data">
+                    <tr >
+                        <td> </td>
+                    </tr>
+                    <!-- Add more rows with similar structure as needed -->
+                </tbody>`
+    }
     reservation_table.append(htmlstr);
 
 }

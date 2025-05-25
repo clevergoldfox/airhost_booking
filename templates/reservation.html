@@ -24,8 +24,8 @@
         <!-- breadcrumb -->
         <ol class="breadcrumb">
             <li>Home</li>
-            <li>Miscellaneous</li>
-            <li>Blank Page</li>
+            <li>予約データ入力</li>
+            <li></li>
         </ol>
         <!-- end breadcrumb -->
 
@@ -57,9 +57,8 @@
 
                     <!-- PAGE HEADER -->
                     <i class="fa-fw fa fa-home"></i>
-                    Page Header
+                        予約データ入力
                     <span>>
-                        Subtitle
                     </span>
                 </h1>
             </div>
@@ -112,10 +111,20 @@
 
                 <!-- NEW WIDGET START -->
                 <article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-
-                    <form id="datafile-form" class="smart-form" enctype="multipart/form-data">
-                        <button type="button" id="fileaddbtn" class="btn btn-success">+ add file</button>
-                        <input type="file" id="datafile" name="datafile" class="input-xs" style="display: none;" />
+                    <div class="d-flex justify-space-around align-items-center mb-3">
+                        <form id="datafile-form" class="smart-form" enctype="multipart/form-data">
+                            <button type="button" id="fileaddbtn" class="btn btn-success p-2 round">データフ追加(CSVァイル)</button>
+                            <input type="file" id="datafile" name="datafile" class="input-xs" style="display: none;" accept=".csv" multiple />
+                        </form>
+                        <form id="apidata-form" class="smart-form" enctype="multipart/form-data">
+                            <button type="button" id="fileaddbtn" class="btn btn-success p-2 round">データ追加(API利用)</button>
+                            <input type="file" id="datafile" name="datafile" class="input-xs" style="display: none;" />
+                        </form>
+                        <form id="apidata-form" class="smart-form" enctype="multipart/form-data">
+                            <button type="button" id="fileaddbtn" class="btn btn-success p-2 round">データ追加(保管資料)</button>
+                            <input type="file" id="datafile" name="datafile" class="input-xs" style="display: none;" />
+                        </form>
+                        <button type="button" id="dateremove" class="btn btn-danger p-2 round">データ削除</button>
                     </div>
 
 
@@ -136,7 +145,7 @@
 								-->
                         <header>
                             <span class="widget-icon"> <i class="fa fa-table"></i> </span>
-                            <h2>Standard Data Tables </h2>
+                            <h2>予約データ</h2>
 
                         </header>
 
@@ -157,49 +166,7 @@
                                     width="100%">
                                     <thead>
                                         <tr>
-                                            <th data-hide="phone">ID</th>
-                                            <th data-hide="phone">予約サイト</th>
-                                            <th data-hide="phone">チャンネル予約ID</th>
-                                            <th data-hide="phone">AirHost予約ID</th>
-                                            <th data-hide="phone">チェックイン</th>
-                                            <th data-hide="phone">チェックアウト</th>
-                                            <th data-hide="phone">物件名</th>
-                                            <th data-hide="phone">物件タグ</th>
-                                            <th data-hide="phone">部屋番号</th>
-                                            <th data-hide="phone">ゲスト名</th>
-                                            <th data-hide="phone">電話番号</th>
-                                            <th data-hide="phone">メールアドレス</th>
-                                            <th data-hide="phone">国籍</th>
-                                            <th data-hide="phone">ゲストアドレス</th>
-                                            <th data-hide="phone">状態</th>
-                                            <th data-hide="phone">チェックイン状態</th>
-                                            <th data-hide="phone">支払い済み</th>
-                                            <th data-hide="phone">ゲスト数</th>
-                                            <th data-hide="phone">合計日数</th>
-                                            <th data-hide="phone">予約日</th>
-                                            <th data-hide="phone">通貨</th>
-                                            <th data-hide="phone">販売</th>
-                                            <th data-hide="phone">OTA サービス料</th>
-                                            <th data-hide="phone">受取金</th>
-                                            <th data-hide="phone">支払済み（補助金/クーポン）</th>
-                                            <th data-hide="phone">OTA 決済</th>
-                                            <th data-hide="phone">クレジット</th>
-                                            <th data-hide="phone">現金</th>
-                                            <th data-hide="phone">未収</th>
-                                            <th data-hide="phone">クリーニング代</th>
-                                            <th data-hide="phone">サポート料金</th>
-                                            <th data-hide="phone">コメント</th>
-                                            <th data-hide="phone">料金プラン</th>
-                                            <th data-hide="phone">大人</th>
-                                            <th data-hide="phone">子供</th>
-                                            <th data-hide="phone">説明</th>
-                                            <th data-hide="phone">決済手数料</th>
-                                            <th data-hide="phone">キャンセル</th>
-                                            <th data-hide="phone">予約エンジンクーポン</th>
-                                            <th data-hide="phone">宿泊者名</th>
-                                            <th data-hide="phone">更新日時</th>
-                                            <th data-hide="phone">幼児</th>
-                                            <th data-hide="phone">PIN</th>
+                                            <th class="nodatathead" style="font-weight: 600; width: 100%; text-align: center;">資料を追加してください。</th>
                                             <!-- <th data-class="expand"><i
                                                     class="fa fa-fw fa-user text-muted hidden-md hidden-sm hidden-xs"></i>
                                                 Name</th>
@@ -217,50 +184,8 @@
                                         </tr>
                                     </thead>
                                     <tbody id="reservation_data">
-                                        <tr>
-                                            <td>1</td>
-                                            <td>Booking.com</td>
-                                            <td>BC123456</td>
-                                            <td>AH789012</td>
-                                            <td>2024-05-20</td>
-                                            <td>2024-05-25</td>
-                                            <td>Sunset Villa</td>
-                                            <td>Beach</td>
-                                            <td>101</td>
-                                            <td>John Smith</td>
-                                            <td>+81-90-1234-5678</td>
-                                            <td>john@example.com</td>
-                                            <td>USA</td>
-                                            <td>123 Main St, New York</td>
-                                            <td>Confirmed</td>
-                                            <td>Not Checked In</td>
-                                            <td>Yes</td>
-                                            <td>2</td>
-                                            <td>5</td>
-                                            <td>2024-05-15</td>
-                                            <td>JPY</td>
-                                            <td>50000</td>
-                                            <td>5000</td>
-                                            <td>45000</td>
-                                            <td>0</td>
-                                            <td>0</td>
-                                            <td>0</td>
-                                            <td>0</td>
-                                            <td>0</td>
-                                            <td>3000</td>
-                                            <td>2000</td>
-                                            <td>No special requests</td>
-                                            <td>Standard</td>
-                                            <td>2</td>
-                                            <td>0</td>
-                                            <td>Regular stay</td>
-                                            <td>500</td>
-                                            <td>No</td>
-                                            <td>None</td>
-                                            <td>John Smith</td>
-                                            <td>2024-05-15 10:00:00</td>
-                                            <td>0</td>
-                                            <td>1234</td>
+                                        <tr >
+                                            <td> </td>
                                         </tr>
                                         <!-- Add more rows with similar structure as needed -->
                                     </tbody>

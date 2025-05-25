@@ -1,0 +1,186 @@
+{% include 'layout/header.html' %}
+
+		<!-- MAIN PANEL -->
+		<div id="regist-main" role="main">
+
+			<!-- MAIN CONTENT -->
+			<div id="content">
+
+				<!-- row -->
+				<div class="row">
+					
+					<!-- col -->
+					<div class="col-xs-12 col-sm-7 col-md-7 col-lg-4">
+						<h1 class="page-title txt-color-blueDark">
+							
+							<!-- PAGE HEADER -->
+							<i class="fa-fw fa fa-home"></i> 
+                            新規登録
+							<span>>
+							</span>
+						</h1>
+					</div>
+					<!-- end col -->
+					
+				</div>
+				<!-- end row -->
+				
+				<!--
+					The ID "widget-grid" will start to initialize all widgets below 
+					You do not need to use widgets if you dont want to. Simply remove 
+					the <section></section> and you can use wells or panels instead 
+					-->
+				
+				<!-- widget grid -->
+				<section id="widget-grid" class="">
+				
+					<!-- row -->
+					<div class="row">
+						
+						<!-- NEW WIDGET START -->
+						<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+							
+							<!-- Widget ID (each widget will need unique ID)-->
+							<div class="jarviswidget" id="wid-id-1" data-widget-colorbutton="false" data-widget-editbutton="false" data-widget-custombutton="false">
+								<!-- widget options:
+								usage: <div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
+				
+								data-widget-colorbutton="false"
+								data-widget-editbutton="false"
+								data-widget-togglebutton="false"
+								data-widget-deletebutton="false"
+								data-widget-fullscreenbutton="false"
+								data-widget-custombutton="false"
+								data-widget-collapsed="true"
+								data-widget-sortable="false"
+				
+								-->
+								<header>
+									<span class="widget-icon"> <i class="fa fa-edit"></i> </span>
+									<h2> </h2>
+				
+								</header>
+				
+								<!-- widget div-->
+								<div>
+				
+									<!-- widget edit box -->
+									<div class="jarviswidget-editbox">
+										<!-- This area used as dropdown edit box -->
+				
+									</div>
+									<!-- end widget edit box -->
+				
+									<!-- widget content -->
+									<div class="widget-body no-padding">
+				
+										<form class="smart-form" id="signup-form" enctype="multipart/form-data">
+											<header>
+												新規登録
+											</header>
+				
+											<fieldset class="col col-12 col-md-12 col-lg-12">
+												<section class="col col-6 col-md-6 col-lg-6 col-xs-12">
+													<label class="label">氏名(姓)</label>
+													<label class="input" for="lastname">
+														<input type="text" name="firstname" id="lastname" maxlength="10">
+													</label>
+													<!-- <div class="note">
+														<strong>Maxlength</strong> is automatically added via the "maxlength='#'" attribute
+													</div> -->
+												</section>
+												<section class="col col-6 col-md-6 col-lg-6 col-xs-12">
+													<label class="label">氏名(名)</label>
+													<label class="input" for="firstname">
+														<input type="text" name="lastname" id="firstname" maxlength="10">
+													</label>
+													<!-- <div class="note">
+														<strong>Maxlength</strong> is automatically added via the "maxlength='#'" attribute
+													</div> -->
+												</section>
+											
+											</fieldset>
+
+                                            <fieldset class="col col-12 col-md-12 col-lg-12">
+                                                <section class="col col-6 col-md-6 col-lg-6 col-xs-12">
+                                                    <label class="label">性別</label>
+                                                    <div class="inline-group">
+                                                        <label class="radio">
+                                                            <input type="radio" name="gender" value="男性" checked="checked">
+                                                            <i></i>男性</label>
+                                                        <label class="radio">
+                                                            <input type="radio" name="gender" value="女性">
+                                                            <i></i>女性</label>
+                                                            <label class="radio">
+                                                                <input type="radio" name="gender" value="-">
+                                                                <i></i>回答しない</label>
+                                                            </div>
+                                                            <label class="label">生年月日</label>
+                                                            <label class="input"> <i class="icon-append fa fa-calendar"></i>
+                                                        <input type="text" name="birth" placeholder="--/--/----" class="datepicker" data-dateformat='dd/mm/yy'>
+                                                    </label>
+                                                    <label class="label">メールアドレス</label>
+                                                    <label class="input" for="email">
+                                                        <input type="email" name="email" id="email" maxlength="50">
+                                                    </label>
+                                                    <label class="label">パスワード</label>
+                                                    <label class="input" for="password">
+                                                        <i class="icon-append fa fa-eye passhinttoogle"></i>
+                                                        <input type="password" name="password" id="password" maxlength="20">
+                                                    </label>
+                                                    <label class="label">パスワード確認</label>
+                                                    <label class="input" for="confirm">
+                                                        <i class="icon-append fa fa-eye passhinttoogle"></i>
+                                                        <input type="password" id="confirm" maxlength="20">
+                                                    </label>
+                                                </section>
+
+                                                <section class="col col-4 col-md-4 col-lg-4 col-xs-12">
+                                                    <label class="label">プロフィール画像 </label>
+                                                    <img id="avatarimg" src="{{ url_for('static', filename='img/avatars/default.png')}}" alt="プロフィール画像">
+                                                    <div class="d-none input input-file ">
+                                                        <span class="button"><input type="file" id="avatar" name="avatar" accept=".jpg, .png, .bmp" onchange="this.parentNode.nextSibling.value = this.value">閲覧する</span><input type="text" placeholder="プロフィール画像" readonly=""/>
+                                                    </div>
+                                                </section>
+                                            </fieldset>
+
+											<footer>
+												<button type="submit" class="btn btn-primary">
+													登録
+												</button>
+												<button type="button" class="btn btn-default" onclick="location.href='/login';">
+													ログイン画面へ
+												</button>
+											</footer>
+										</form>
+				
+									</div>
+									<!-- end widget content -->
+				
+								</div>
+								<!-- end widget div -->
+				
+							</div>
+							<!-- end widget -->
+				
+						</article>
+						<!-- WIDGET END -->
+						
+					</div>
+				
+					<!-- end row -->
+				
+				</section>
+				<!-- end widget grid -->
+
+			</div>
+			<!-- END MAIN CONTENT -->
+
+		</div>
+		<!-- END MAIN PANEL -->
+
+{% include 'layout/footer.html' %}
+
+{% include 'layout/scripts.html' %}
+
+		

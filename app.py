@@ -22,6 +22,38 @@ flask_app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+@flask_app.route('/login')
+def login():
+    return render_template('login.html')
+
+@flask_app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    if request.method == 'POST':
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        gender = request.form['gender']
+        birth = request.form['birth']
+        email = request.form['email']
+        password = request.form['password']
+        file = request.files['avatar']
+        original = file.filename
+        now = datetime.now()
+        if '.' in original:
+            ext = original.rsplit('.', 1)[-1].lower()  # returns 'png'
+        else:
+            ext = ''
+        avatar = now.strftime('%Y%m%d%H%M%S') + f'{int(now.microsecond / 1000):03d}.{ext}'
+        file.save(os.path.join("uploads", avatar))
+        create_user(firstname, lastname, gender, birth, email, password, original, avatar)
+
+
+
+       
+
+        return render_template('index.html')
+    if request.method == 'GET':
+        return render_template('signup.html')
+
 
 @flask_app.route('/favicon.ico')
 def favicon():

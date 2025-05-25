@@ -5,14 +5,14 @@
 	src="{{ url_for('static', filename='js/plugin/pace/pace.min.js')}}"></script>
 
 <!-- Link to Google CDN's jQuery + jQueryUI; fall back to local -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')}}"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
 <script>
 	if (!window.jQuery) {
 		document.write(`<script src="{{ url_for('static', filename='js/libs/jquery-2.1.1.min.js')}}"><\/script>`);
 	}
 </script>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js')}}"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script>
 	if (!window.jQuery.ui) {
 		document.write(`<script src="{{ url_for('static', filename='js/libs/jquery-ui-1.10.3.min.js')}}"><\/script>`);
@@ -92,6 +92,61 @@
 	$(document).ready(function () {
 
 		pageSetUp();
+
+		//==================start signup, login ============//
+
+		//toggle password hint
+		$("form").on("click", ".passhinttoogle", function() {
+			if($(this).hasClass("fa-eye")){
+				$(this).removeClass("fa-eye").addClass("fa-eye-slash");
+				$(this).parent().find("input").attr("type", "text");
+			} else {
+				$(this).removeClass("fa-eye-slash").addClass("fa-eye");
+				$(this).parent().find("input").attr("type", "password");
+			}
+		});
+
+		//imagefile upload
+		$("#avatarimg").on("click", function () {
+			$("#avatar").click();
+		});
+
+		$("#avatar").on("change", function () {
+			var fileName = $(this).val().split("\\").pop();
+			if (fileName) {
+				$("#avatarimg").attr("src", URL.createObjectURL(this.files[0]));
+			} else {
+				$("#avatarimg").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}");
+			}
+		});
+
+		$("#signup-form").submit(function (event) {
+			event.preventDefault();
+			const form = this; // native DOM element
+			const formData = new FormData(form); // create FormData object
+
+			// Example: log values
+			for (const [key, value] of formData.entries()) {
+				console.log(key, value);
+			}
+			
+						
+			$.ajax({
+				type: "POST",
+				url: "/signup",
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (response) {
+					console.log("sucess");
+				},
+				error: function (xhr, status, error) {
+					alert("An error occurred while uploading the file.");
+				}
+			});
+		});
+
+		//==================end signup, login ==============//
 
 
 		//=============== start data table ==============//
@@ -234,6 +289,8 @@
 		//=============== end data table ==============//
 
 		//=============== start reservation data adding ==============//
+		draw_reservationTable();
+		draw_pagination();
 		$("#fileaddbtn").click(function () {
 			if($(this).attr("type")=="button"){
 				$("#datafile").click();
@@ -242,15 +299,14 @@
 		$("#datafile").change(function () {
 			var fileName = $(this).val().split("\\").pop();
 			console.log(fileName);
-			$("#fileaddbtn").text("add (" + fileName + ")");
+			$("#fileaddbtn").text("データフ追加(" + fileName + ")");
 			$("#fileaddbtn").attr("type", "submit");
 		});
 
 		$("#datafile-form").submit(function (event) {
 			event.preventDefault();
 			var formData = new FormData($(this)[0]);
-			console.log(formData);
-			
+						
 			$.ajax({
 				type: "POST",
 				url: "/reservation",
@@ -259,13 +315,16 @@
 				processData: false,
 				success: function (response) {
 					if (response.status == "success") {
-						$("#fileaddbtn").text("+ add");
+						$("#fileaddbtn").text("データフ追加(CSVァイル)");
 						$("#datafile").val("");
 						$("#fileaddbtn").attr("type", "button");
-						console.log(response.data);
+						localStorage.removeItem('reservationData');
+						localStorage.setItem('reservationData', JSON.stringify(response.data));
 						reservation_data = response.data;
+						console.log(reservation_data);
+						
 						activePage = 1;
-						pageSize = $("#dt_basic_length").find("select").val();
+						pageSize = 10;
 						pageCount = Math.ceil(reservation_data.length / pageSize);
 						draw_reservationTable();
 						draw_pagination();
@@ -284,6 +343,7 @@
 		$("#dt_basic_length").change(function () {
 			pageSize = $(this).find("select").val();
 			pageCount = Math.ceil(reservation_data.length / pageSize);
+			activePage = 1;
 			draw_reservationTable();
 			draw_pagination();
 		});
@@ -309,6 +369,18 @@
 			
 		});
 	//=============== end reservation data adding ==============//
+	//=============== reservation data removing ==============//
+	$("#dateremove").click(function () {
+		if (confirm("Are you sure you want to delete all data?")) {
+			localStorage.removeItem('reservationData');
+			reservation_data = [];
+			activePage = 1;
+			pageSize = 10;
+			pageCount = 0;
+			draw_reservationTable();
+			draw_pagination();
+		}
+	});
 	})
 
 </script>
