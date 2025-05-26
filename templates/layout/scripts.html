@@ -121,18 +121,18 @@
 
 		/* bar chart */
 
-		if ($("#bar-chart").length) {
+		if ($("#opedate-chart-1").length) {
 
 		var data1 = [];
-		for (var i = 0; i <= 12; i += 1)
+		for (var i = 1; i <= 14; i += 1)
 			data1.push([i, parseInt(Math.random() * 100)]);
 
 		var data2 = [];
-		for (var i = 0; i <= 12; i += 1)
+		for (var i = 1; i <= 14; i += 1)
 			data2.push([i, parseInt(Math.random() * 30)]);
 
 		var data3 = [];
-		for (var i = 0; i <= 12; i += 1)
+		for (var i = 1; i <= 14; i += 1)
 			data3.push([i, parseInt(Math.random() * 30)]);
 
 		var ds = new Array();
@@ -163,7 +163,69 @@
 		});
 
 		//Display graph
-		$.plot($("#bar-chart"), ds, {
+		$.plot($("#opedate-chart-1"), ds, {
+			colors : [$chrt_second, $chrt_fourth, "#666", "#BBB"],
+			grid : {
+				show : true,
+				hoverable : true,
+				clickable : true,
+				tickColor : $chrt_border_color,
+				borderWidth : 0,
+				borderColor : $chrt_border_color,
+			},
+			legend : true,
+			tooltip : true,
+			tooltipOpts : {
+				content : "<b>%x</b> = <span>%y</span>",
+				defaultTheme : false
+			}
+
+		});
+
+		}
+		if ($("#opedate-chart-2").length) {
+
+		var data1 = [];
+		for (var i = 0; i <= 14; i += 1)
+			data1.push([i, parseInt(Math.random() * 100)]);
+
+		var data2 = [];
+		for (var i = 0; i <= 14; i += 1)
+			data2.push([i, parseInt(Math.random() * 30)]);
+
+		var data3 = [];
+		for (var i = 0; i <= 14; i += 1)
+			data3.push([i, parseInt(Math.random() * 30)]);
+
+		var ds = new Array();
+
+		ds.push({
+			data : data1,
+			bars : {
+				show : true,
+				barWidth : 0.2,
+				order : 1,
+			}
+		});
+		ds.push({
+			data : data2,
+			bars : {
+				show : true,
+				barWidth : 0.2,
+				order : 2
+			}
+		});
+		ds.push({
+			data : data3,
+			bars : {
+				show : true,
+				barWidth : 0.2,
+				order : 3
+			}
+		});
+
+		//Display graph
+		$.plot($("#opedate-chart-2"), ds, {
 			colors : [$chrt_second, $chrt_fourth, "#666", "#BBB"],
 			grid : {
 				show : true,
