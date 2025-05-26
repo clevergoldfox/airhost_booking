@@ -85,13 +85,131 @@
 <script src="{{ url_for('static', filename='js/plugin/datatables/dataTables.bootstrap.min.js')}}"></script>
 <script src="{{ url_for('static', filename='js/plugin/datatable-responsive/datatables.responsive.min.js')}}"></script>
 
+<!-- Float Chart  -->
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.cust.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.resize.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.fillbetween.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.orderBar.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.pie.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.time.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.tooltip.min.js')}}"></script>
+
+
+<script src="{{ url_for('static', filename='js/app/users.js')}}"></script>
 <script src="{{ url_for('static', filename='js/app/reservation.js')}}"></script>
 
 <script type="text/javascript">
 
 	$(document).ready(function () {
 
+		/* chart colors default */
+		var $chrt_border_color = "#efefef";
+		var $chrt_grid_color = "#DDD"
+		var $chrt_main = "#E24913";
+		/* red       */
+		var $chrt_second = "#6595b4";
+		/* blue      */
+		var $chrt_third = "#FF9F01";
+		/* orange    */
+		var $chrt_fourth = "#7e9d3a";
+		/* green     */
+		var $chrt_fifth = "#BD362F";
+		/* dark red  */
+		var $chrt_mono = "#000";
+
 		pageSetUp();
+
+		/* bar chart */
+
+		if ($("#bar-chart").length) {
+
+		var data1 = [];
+		for (var i = 0; i <= 12; i += 1)
+			data1.push([i, parseInt(Math.random() * 100)]);
+
+		var data2 = [];
+		for (var i = 0; i <= 12; i += 1)
+			data2.push([i, parseInt(Math.random() * 30)]);
+
+		var data3 = [];
+		for (var i = 0; i <= 12; i += 1)
+			data3.push([i, parseInt(Math.random() * 30)]);
+
+		var ds = new Array();
+
+		ds.push({
+			data : data1,
+			bars : {
+				show : true,
+				barWidth : 0.2,
+				order : 1,
+			}
+		});
+		ds.push({
+			data : data2,
+			bars : {
+				show : true,
+				barWidth : 0.2,
+				order : 2
+			}
+		});
+		ds.push({
+			data : data3,
+			bars : {
+				show : true,
+				barWidth : 0.2,
+				order : 3
+			}
+		});
+
+		//Display graph
+		$.plot($("#bar-chart"), ds, {
+			colors : [$chrt_second, $chrt_fourth, "#666", "#BBB"],
+			grid : {
+				show : true,
+				hoverable : true,
+				clickable : true,
+				tickColor : $chrt_border_color,
+				borderWidth : 0,
+				borderColor : $chrt_border_color,
+			},
+			legend : true,
+			tooltip : true,
+			tooltipOpts : {
+				content : "<b>%x</b> = <span>%y</span>",
+				defaultTheme : false
+			}
+
+		});
+
+		}
+
+		/* end bar chart */
+
+
+
+		var me = {};
+		if(localStorage.getItem("me")){
+			const medata = JSON.parse(localStorage.getItem("me"));
+			me = {
+				"id": medata[0],
+				"firstname": medata[1],
+				"lastname": medata[2],
+				"gender": medata[3],
+				"birth": medata[4],
+				"email": medata[5],
+				"role": medata[6],
+				"avatar": medata[8]
+			};
+		}
+		console.log(me);
+
+		if(me?.role == "admin" || me?.role == "manager"){
+			$("#usermanage-nav").removeClass("d-none");
+		} else {
+			$("#usermanage-nav").addClass("d-none");
+		}
+		
 
 		//==================start signup, login ============//
 
@@ -124,13 +242,6 @@
 			event.preventDefault();
 			const form = this; // native DOM element
 			const formData = new FormData(form); // create FormData object
-
-			// Example: log values
-			for (const [key, value] of formData.entries()) {
-				console.log(key, value);
-			}
-			
-						
 			$.ajax({
 				type: "POST",
 				url: "/signup",
@@ -138,16 +249,65 @@
 				contentType: false,
 				processData: false,
 				success: function (response) {
-					console.log("sucess");
+					location.href = "/login"; // Redirect to login page on success
 				},
 				error: function (xhr, status, error) {
-					alert("An error occurred while uploading the file.");
+					alert("申し訳ありませんが、もう一度お試しください。");
 				}
 			});
 		});
 
+		$("#login-form").submit(function (event) {
+			event.preventDefault();
+			const form = this; // native DOM element
+			const formData = new FormData(form); // create FormData object
+						
+			$.ajax({
+				type: "POST",
+				url: "/login",
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (res) {
+					console.log(res);
+					
+					switch (res.code){
+						case '100': localStorage.setItem("me", JSON.stringify(res.data)); location.href = '/'; break;
+						case '102':  break;
+					}
+					// alert(res.message);
+					
+					// location.href = "/"; // Redirect to login page on success
+				},
+				error: function (xhr, status, error) {
+					alert("申し訳ありませんが、もう一度お試しください。");
+				}
+			});
+		});
+
+
 		//==================end signup, login ==============//
 
+
+
+
+		//================== start top bar ===============//
+		
+		if (me.avatar) {
+			$("#top-avatar").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}".replace("default.png", me.avatar));
+		} else {
+			$("#top-avatar").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}");
+		}
+		$("#top-name").text(me.firstname && me.lastname ? me.firstname + " " + me.lastname + "さん" : "ユーザーさん");
+
+		$("#profileedit").click(async function () {
+			location.href = await "/profile";
+		});
+		$("#logout").click(function () {
+			localStorage.removeItem("me");
+			location.href = "/login";
+		});
+		//=============== end top bar ================//
 
 		//=============== start data table ==============//
 		var responsiveHelper_dt_basic = undefined;
@@ -287,8 +447,9 @@
 
 		/* END TABLETOOLS */
 		//=============== end data table ==============//
-
-		//=============== start reservation data adding ==============//
+		
+		//=============== start reservation data  ==============//
+		// reservation data adding 
 		draw_reservationTable();
 		draw_pagination();
 		$("#fileaddbtn").click(function () {
@@ -334,7 +495,7 @@
 					}
 				},
 				error: function (xhr, status, error) {
-					alert("An error occurred while uploading the file.");
+					alert("申し訳ありませんが、もう一度お試しください。");
 				}
 			});
 		});
@@ -368,19 +529,19 @@
 			}
 			
 		});
-	//=============== end reservation data adding ==============//
-	//=============== reservation data removing ==============//
-	$("#dateremove").click(function () {
-		if (confirm("Are you sure you want to delete all data?")) {
-			localStorage.removeItem('reservationData');
-			reservation_data = [];
-			activePage = 1;
-			pageSize = 10;
-			pageCount = 0;
-			draw_reservationTable();
-			draw_pagination();
-		}
-	});
+		// reservation data removing 
+		$("#dateremove").click(function () {
+			if (confirm("Are you sure you want to delete all data?")) {
+				localStorage.removeItem('reservationData');
+				reservation_data = [];
+				activePage = 1;
+				pageSize = 10;
+				pageCount = 0;
+				draw_reservationTable();
+				draw_pagination();
+			}
+		});
+		//=============== end reservation data  ==============//
 	})
 
 </script>

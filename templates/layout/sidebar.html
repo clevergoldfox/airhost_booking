@@ -5,17 +5,6 @@
 
 			<!-- User info -->
 			<div class="login-info">
-				<span> <!-- User image size is adjusted inside CSS, it should stay as it --> 
-					
-					<a href="javascript:void(0);" id="show-shortcut" data-action="toggleShortcut">
-						<img src="{{ url_for('static', filename='img/avatars/sunny.png')}}" alt="me" class="online" /> 
-						<span>
-							john.doe 
-						</span>
-						<i class="fa fa-angle-down"></i>
-					</a> 
-					
-				</span>
 			</div>
 			<!-- end user info -->
 
@@ -23,10 +12,13 @@
 			<nav>
 				<ul>
 					<li>
-						<a href="/" title="Dashboard"><i class="fa fa-lg fa-fw fa-home"></i> <span class="menu-item-parent">ダッシュボード</span></a>
+						<a href="/" title="ダッシュボード"><i class="fa fa-lg fa-fw fa-home"></i> <span class="menu-item-parent">ダッシュボード</span></a>
+					</li>
+					<li id="usermanage-nav" class="d-none">
+						<a href="/users-page" title="ユーザー管理"><i class="fa fa-lg fa-fw fa-users"></i> <span class="menu-item-parent">ユーザー管理</span></a>
 					</li>
 					<li>
-						<a href="/reservation" title="reservation"><i class="fa fa-lg fa-fw fa-table"></i> <span class="menu-item-parent">予約データ入力</span></a>
+						<a href="/reservation" title="予約データ入力"><i class="fa fa-lg fa-fw fa-table"></i> <span class="menu-item-parent">予約データ入力</span></a>
 					</li>
 					
 				</ul>

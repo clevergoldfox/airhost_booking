@@ -12,6 +12,7 @@ import glob
 import csv
 import re
 
+from controllers.users import create_user, get_users, edit_user, del_user, login_user 
 
 # -------------------------------
 # Flask Application Definition
@@ -22,9 +23,21 @@ flask_app = Flask(__name__)
 def index():
     return render_template('index.html')
 
-@flask_app.route('/login')
+@flask_app.route('/login', methods=['GET', 'POST'])
 def login():
-    return render_template('login.html')
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        user = login_user(email, password)
+        print(user)
+        if user:
+            if user == 102:
+                return {'code': '102', 'message': 'Incorrect password'}
+            return {'code': '100', 'data': user, 'message': 'Login successful'}
+        else:
+            return {'code': '101', 'message': 'Invalid email or password'}
+    if request.method == 'GET':
+        return render_template('login.html')
 
 @flask_app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -34,21 +47,25 @@ def signup():
         gender = request.form['gender']
         birth = request.form['birth']
         email = request.form['email']
+        role = request.form['role']
+        if role:
+            role = role.lower()
+        else:
+            role = 'staff'
         password = request.form['password']
         file = request.files['avatar']
         original = file.filename
-        now = datetime.now()
-        if '.' in original:
-            ext = original.rsplit('.', 1)[-1].lower()  # returns 'png'
+        if original:
+            now = datetime.now()
+            if '.' in original:
+                ext = original.rsplit('.', 1)[-1].lower()  # returns 'png'
+            else:
+                ext = ''
+            avatar = now.strftime('%Y%m%d%H%M%S') + f'{int(now.microsecond / 1000):03d}.{ext}'
+            file.save(os.path.join("static/img/avatars", avatar))
         else:
-            ext = ''
-        avatar = now.strftime('%Y%m%d%H%M%S') + f'{int(now.microsecond / 1000):03d}.{ext}'
-        file.save(os.path.join("uploads", avatar))
-        create_user(firstname, lastname, gender, birth, email, password, original, avatar)
-
-
-
-       
+            avatar = 'default.png'
+        create_user(firstname, lastname, gender, birth, email, role, password, original, avatar)
 
         return render_template('index.html')
     if request.method == 'GET':
@@ -58,6 +75,46 @@ def signup():
 @flask_app.route('/favicon.ico')
 def favicon():
     return send_from_directory('static', 'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+@flask_app.route('/users', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def users():
+    if request.method == 'PUT':
+        id = request.form['id']
+        firstname = request.form['firstname']
+        lastname = request.form['lastname']
+        gender = request.form['gender']
+        birth = request.form['birth']
+        email = request.form['email']
+        role = request.form['role']
+        file = request.files['avatar']
+        original = file.filename
+        if original:
+            now = datetime.now()
+            if '.' in original:
+                ext = original.rsplit('.', 1)[-1].lower()  # returns 'png'
+            else:
+                ext = ''
+            avatar = now.strftime('%Y%m%d%H%M%S') + f'{int(now.microsecond / 1000):03d}.{ext}'
+            file.save(os.path.join("static/img/avatars", avatar))
+        else:
+            avatar = False
+        edit_user(id, firstname, lastname, gender, birth, email, role, original, avatar)
+        users = get_users()
+        return render_template('users.html', users=users)
+    if request.method == 'GET':
+        users = get_users()
+        return users
+
+@flask_app.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    del_user(user_id)
+    users = get_users()
+    return render_template('users.html', users=users)
+
+@flask_app.route('/users-page')
+def users_page():
+    users = get_users()
+    return render_template('users.html', users=users)
 
 @flask_app.route('/reservation', methods=['GET', 'POST'])
 def reservation():
