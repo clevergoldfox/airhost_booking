@@ -104,7 +104,21 @@
 						
 						<!-- NEW WIDGET START -->
 						<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-							
+							<div class="d-flex justify-space-around align-items-center mb-3">
+								<form id="datafile-form" class="smart-form" enctype="multipart/form-data">
+									<button type="button" id="fileaddbtn" class="btn btn-success p-2 round">データフ追加(CSVァイル)</button>
+									<input type="file" id="datafile" name="datafile" class="input-xs" style="display: none;" accept=".xls, .xlsx" multiple />
+								</form>
+								<form id="apidata-form" class="smart-form" enctype="multipart/form-data">
+									<button type="button" id="fileaddbtn" class="btn btn-success p-2 round">データ追加(API利用)</button>
+									<input type="file" id="datafile" name="datafile" class="input-xs" style="display: none;" />
+								</form>
+								<form id="apidata-form" class="smart-form" enctype="multipart/form-data">
+									<button type="button" id="fileaddbtn" class="btn btn-success p-2 round">データ追加(保管資料)</button>
+									<input type="file" id="datafile" name="datafile" class="input-xs" style="display: none;" />
+								</form>
+								<button type="button" id="dataremove" class="btn btn-danger p-2 round">データ削除</button>
+							</div>
 							<!-- Widget ID (each widget will need unique ID)-->
 							<div class="jarviswidget" id="wid-id-0" data-widget-editbutton="false">
 								<!-- widget options:
@@ -139,7 +153,8 @@
 									<!-- widget content -->
 									<div class="widget-body no-padding">
 
-										<div id="bar-chart" class="chart"></div>
+										<div id="opedate-chart-1" class="chart"></div>
+										<div id="opedate-chart-2" class="chart"></div>
 
 									</div>
 									<!-- end widget content -->
@@ -181,6 +196,7 @@
 
 {% include 'layout/footer.html' %}
 
-{% include 'layout/scripts.html' %}
+{% include 'layout/common-scripts.html' %}
 
+{% include 'layout/visual-scripts.html' %}
 		

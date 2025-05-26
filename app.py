@@ -23,6 +23,8 @@ flask_app = Flask(__name__)
 def index():
     return render_template('index.html')
 
+# =================== start login-user ========================
+
 @flask_app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -38,6 +40,11 @@ def login():
             return {'code': '101', 'message': 'Invalid email or password'}
     if request.method == 'GET':
         return render_template('login.html')
+
+# =================== end login-user ========================
+
+
+# =================== start users-data manage ========================
 
 @flask_app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -116,18 +123,45 @@ def users_page():
     users = get_users()
     return render_template('users.html', users=users)
 
+# =================== end users-data manage ========================
+
+# =================== start operation-data manage ========================
+
+@flask_app.route('/operation', methods=['GET', 'POST'])
+def operation():
+    if request.method == 'POST':
+        file = request.files['datafile']
+
+        excel_data = pd.read_excel(file, sheet_name=None)  # sheet_name=None reads all sheets
+        
+        # Columns to extract
+        columns_to_extract = ['部屋番号', 'マンスリー+民泊', 'マンスリー', '民泊使用日数']
+
+        ope_data = {}
+
+        for sheet_name, df in excel_data.items():
+            existing_cols = [col for col in columns_to_extract if col in df.columns]
+            if existing_cols:
+                ope_data[sheet_name] = df[existing_cols].values.tolist()
+                print(sheet_name, ope_data[sheet_name])
+
+
+        # print(ope_data)
+
+
+
+# =================== end operation-data manage ========================
+
+# =================== start reservation-data manage ========================
+
 @flask_app.route('/reservation', methods=['GET', 'POST'])
 def reservation():
     if request.method == 'POST':
         file = request.files['datafile']
 
-        # Read CSV content
         pre_data = []
         file.stream.seek(0)  # reset file pointer
         file_content = csv.reader(file.stream.read().decode('utf-8-sig').splitlines())
-        
-        # for row in csv_reader:
-            # print(row)
 
         return jsonify({'status': 'success', 'data': list(file_content)})
 
@@ -135,74 +169,11 @@ def reservation():
     if request.method == 'GET':
         return render_template('reservation.html')
 
+# =================== end reservation-data manage ========================
 
-@flask_app.route("/scrape", methods=['POST'])
-def scrape():
-    # os.system('cls')
-    if 'file' not in request.files:
-        return {'message': 'No file part'}, 400
-    
-    file = request.files['file']
-    step = request.form['step']
-    
-    if file.filename == '':
-        return {'message': 'No selected file'}, 400
-    
 
-    # Read CSV content
-    pre_data = []
-    file.stream.seek(0)  # reset file pointer
-    csv_reader = csv.reader(file.stream.read().decode('utf-8-sig').splitlines())
 
-    for row in csv_reader:
-        row_data = row[0].split('\t')
-        if(len(row_data) > 2):
-            pre_data.append([row_data[0],row_data[2], row_data[3]])
-    data = scrape_data(pre_data, step)
-    all_data = data[0]
-    no_box_data = data[1]
-    no_new_data = data[2]
-    new_data = data[3]
-    
-    header = ['商品タイプ','商品名', 'ASIN', '価格','カート価格', '最安値価格']
-    
-    # Save the data to CSV
-    df1 = pd.DataFrame(all_data, columns=header)
-    df2 = pd.DataFrame(no_box_data, columns=header)
-    df3 = pd.DataFrame(new_data, columns=header)
-    df4 = pd.DataFrame(no_new_data, columns=header)
-
-    # Get the current time in a specific format (e.g., "YYYY-MM-DD_HH-MM-SS")
-    current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-
-    # Combine the keyword and current time for the file name
-    file_name = f"scraped_data_{current_time}.xlsx"
-
-     # Define the directory to save the file (project_directory/saved_files)
-    save_dir = os.path.join(os.getcwd(), 'saved_files')
-    
-    # Create the directory if it does not exist
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-
-    # Construct the full file path
-    file_path = os.path.join(save_dir, file_name)
-
-    # Save the DataFrame to the specified directory
-    with pd.ExcelWriter(file_path, engine='openpyxl') as writer:
-        df1.to_excel(writer, sheet_name='すべての商品', index=False)
-        df2.to_excel(writer, sheet_name='カートがとれていない商品', index=False)
-        df3.to_excel(writer, sheet_name='最安値価格がとれていない商品', index=False)
-        df4.to_excel(writer, sheet_name='最安値価格がとれてい商品', index=False)
-    
-    message1 = file_name + " ファイルが"+ save_dir +"に保存されました。"
-    message2 = "終了コード:100"
-    message3 = "全処理を完了しました."
-    messages = [message1, message2, message3]
-    # Send the file back to the user
-    send_file(file_path, as_attachment=True)
-    return [data[0], messages]
-    
+# =================== Boot server ========================
 
 if __name__ == "__main__":
     flask_app.run(host="127.0.0.1", port=7000, debug=False, use_reloader=False)

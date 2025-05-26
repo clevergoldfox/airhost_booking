@@ -1,0 +1,95 @@
+<!--================================================== -->
+
+<!-- PACE LOADER - turn this on if you want ajax loading to show (caution: uses lots of memory on iDevices)-->
+<script data-pace-options='{ "restartOnRequestAfter": true }'
+	src="{{ url_for('static', filename='js/plugin/pace/pace.min.js')}}"></script>
+
+<!-- Link to Google CDN's jQuery + jQueryUI; fall back to local -->
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script>
+	if (!window.jQuery) {
+		document.write(`<script src="{{ url_for('static', filename='js/libs/jquery-2.1.1.min.js')}}"><\/script>`);
+	}
+</script>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+<script>
+	if (!window.jQuery.ui) {
+		document.write(`<script src="{{ url_for('static', filename='js/libs/jquery-ui-1.10.3.min.js')}}"><\/script>`);
+	}
+</script>
+
+<!-- IMPORTANT: APP CONFIG -->
+<script src="{{ url_for('static', filename='js/app.config.js')}}"></script>
+
+<!-- JS TOUCH : include this plugin for mobile drag / drop touch events-->
+<script src="{{ url_for('static', filename='js/plugin/jquery-touch/jquery.ui.touch-punch.min.js')}}"></script>
+
+<!-- BOOTSTRAP JS -->
+<script src="{{ url_for('static', filename='js/bootstrap/bootstrap.min.js')}}"></script>
+
+<!-- CUSTOM NOTIFICATION -->
+<script src="{{ url_for('static', filename='js/notification/SmartNotification.min.js')}}"></script>
+
+<!-- JARVIS WIDGETS -->
+<script src="{{ url_for('static', filename='js/smartwidgets/jarvis.widget.min.js')}}"></script>
+
+<!-- EASY PIE CHARTS -->
+<script src="{{ url_for('static', filename='js/plugin/easy-pie-chart/jquery.easy-pie-chart.min.js')}}"></script>
+
+<!-- SPARKLINES -->
+<script src="{{ url_for('static', filename='js/plugin/sparkline/jquery.sparkline.min.js')}}"></script>
+
+<!-- JQUERY VALIDATE -->
+<script src="{{ url_for('static', filename='js/plugin/jquery-validate/jquery.validate.min.js')}}"></script>
+
+<!-- JQUERY MASKED INPUT -->
+<script src="{{ url_for('static', filename='js/plugin/masked-input/jquery.maskedinput.min.js')}}"></script>
+
+<!-- JQUERY SELECT2 INPUT -->
+<script src="{{ url_for('static', filename='js/plugin/select2/select2.min.js')}}"></script>
+
+<!-- JQUERY UI + Bootstrap Slider -->
+<script src="{{ url_for('static', filename='js/plugin/bootstrap-slider/bootstrap-slider.min.js')}}"></script>
+
+<!-- browser msie issue fix -->
+<script src="{{ url_for('static', filename='js/plugin/msie-fix/jquery.mb.browser.min.js')}}"></script>
+
+<!-- FastClick: For mobile devices -->
+<script src="{{ url_for('static', filename='js/plugin/fastclick/fastclick.min.js')}}"></script>
+
+<!--[if IE 8]>
+
+		<h1>Your browser is out of date, please update your browser by going to www.microsoft.com/download</h1>
+
+		<![endif]-->
+
+<!-- Demo purpose only -->
+<script src="{{ url_for('static', filename='js/demo.min.js')}}"></script>
+
+<!-- MAIN APP JS FILE -->
+<script src="{{ url_for('static', filename='js/app.min.js')}}"></script>
+
+<!-- ENHANCEMENT PLUGINS : NOT A REQUIREMENT -->
+<!-- Voice command : plugin -->
+<script src="{{ url_for('static', filename='js/speech/voicecommand.min.js')}}"></script>
+
+<!-- SmartChat UI : plugin -->
+<script src="{{ url_for('static', filename='js/smart-chat-ui/smart.chat.ui.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/smart-chat-ui/smart.chat.manager.min.js')}}"></script>
+
+<!-- Data table -->
+<script src="{{ url_for('static', filename='js/plugin/datatables/jquery.dataTables.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/datatables/dataTables.colVis.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/datatables/dataTables.tableTools.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/datatables/dataTables.bootstrap.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/datatable-responsive/datatables.responsive.min.js')}}"></script>
+
+<!-- Float Chart  -->
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.cust.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.resize.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.fillbetween.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.orderBar.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.pie.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.time.min.js')}}"></script>
+<script src="{{ url_for('static', filename='js/plugin/flot/jquery.flot.tooltip.min.js')}}"></script>
