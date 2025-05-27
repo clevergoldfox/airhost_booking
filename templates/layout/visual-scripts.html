@@ -1,154 +1,9 @@
+<script src="{{ url_for('static', filename='js/app/visual.js')}}"></script>
 <script type="text/javascript">
 
 	$(document).ready(function () {
 
-		/* chart colors default */
-		var $chrt_border_color = "#efefef";
-		var $chrt_grid_color = "#DDD"
-		var $chrt_main = "#E24913";
-		/* red       */
-		var $chrt_second = "#6595b4";
-		/* blue      */
-		var $chrt_third = "#FF9F01";
-		/* orange    */
-		var $chrt_fourth = "#7e9d3a";
-		/* green     */
-		var $chrt_fifth = "#BD362F";
-		/* dark red  */
-		var $chrt_mono = "#000";
-
 		pageSetUp();
-
-		/* bar chart */
-
-		if ($("#opedate-chart-1").length) {
-
-		var data1 = [];
-		for (var i = 1; i <= 14; i += 1)
-			data1.push([i, parseInt(Math.random() * 100)]);
-
-		var data2 = [];
-		for (var i = 1; i <= 14; i += 1)
-			data2.push([i, parseInt(Math.random() * 30)]);
-
-		var data3 = [];
-		for (var i = 1; i <= 14; i += 1)
-			data3.push([i, parseInt(Math.random() * 30)]);
-
-		var ds = new Array();
-
-		ds.push({
-			data : data1,
-			bars : {
-				show : true,
-				barWidth : 0.2,
-				order : 1,
-			}
-		});
-		ds.push({
-			data : data2,
-			bars : {
-				show : true,
-				barWidth : 0.2,
-				order : 2
-			}
-		});
-		ds.push({
-			data : data3,
-			bars : {
-				show : true,
-				barWidth : 0.2,
-				order : 3
-			}
-		});
-
-		//Display graph
-		$.plot($("#opedate-chart-1"), ds, {
-			colors : [$chrt_second, $chrt_fourth, "#666", "#BBB"],
-			grid : {
-				show : true,
-				hoverable : true,
-				clickable : true,
-				tickColor : $chrt_border_color,
-				borderWidth : 0,
-				borderColor : $chrt_border_color,
-			},
-			legend : true,
-			tooltip : true,
-			tooltipOpts : {
-				content : "<b>%x</b> = <span>%y</span>",
-				defaultTheme : false
-			}
-
-		});
-
-		}
-		if ($("#opedate-chart-2").length) {
-
-		var data1 = [];
-		for (var i = 0; i <= 14; i += 1)
-			data1.push([i, parseInt(Math.random() * 100)]);
-
-		var data2 = [];
-		for (var i = 0; i <= 14; i += 1)
-			data2.push([i, parseInt(Math.random() * 30)]);
-
-		var data3 = [];
-		for (var i = 0; i <= 14; i += 1)
-			data3.push([i, parseInt(Math.random() * 30)]);
-
-		var ds = new Array();
-
-		ds.push({
-			data : data1,
-			bars : {
-				show : true,
-				barWidth : 0.2,
-				order : 1,
-			}
-		});
-		ds.push({
-			data : data2,
-			bars : {
-				show : true,
-				barWidth : 0.2,
-				order : 2
-			}
-		});
-		ds.push({
-			data : data3,
-			bars : {
-				show : true,
-				barWidth : 0.2,
-				order : 3
-			}
-		});
-
-		//Display graph
-		$.plot($("#opedate-chart-2"), ds, {
-			colors : [$chrt_second, $chrt_fourth, "#666", "#BBB"],
-			grid : {
-				show : true,
-				hoverable : true,
-				clickable : true,
-				tickColor : $chrt_border_color,
-				borderWidth : 0,
-				borderColor : $chrt_border_color,
-			},
-			legend : true,
-			tooltip : true,
-			tooltipOpts : {
-				content : "<b>%x</b> = <span>%y</span>",
-				defaultTheme : false
-			}
-
-		});
-
-		}
-
-		/* end bar chart */
-
-
 
 		var me = {};
 		if(localStorage.getItem("me")){
@@ -172,8 +27,6 @@
 			$("#usermanage-nav").addClass("d-none");
 		}
 		
-
-
 		//================== start top bar ===============//
 		
 		if (me.avatar) {
@@ -224,14 +77,16 @@
 						$("#fileaddbtn").attr("type", "button");
 						localStorage.removeItem('operationData');
 						localStorage.setItem('operationData', JSON.stringify(response.data));
-						operation_data = response.data;
-						
+						operation_data = JSON.parse(response.data);
+                        draw_operation_chart(operation_data);
 						
 					} else {
 						alert("Error: " + response.message);
 					}
 				},
 				error: function (xhr, status, error) {
+                    console.log(error);
+                    
 					alert("申し訳ありませんが、もう一度お試しください。");
 				}
 			});

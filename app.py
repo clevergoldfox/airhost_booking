@@ -11,6 +11,7 @@ import os
 import glob
 import csv
 import re
+import json
 
 from controllers.users import create_user, get_users, edit_user, del_user, login_user 
 
@@ -142,11 +143,15 @@ def operation():
         for sheet_name, df in excel_data.items():
             existing_cols = [col for col in columns_to_extract if col in df.columns]
             if existing_cols:
-                ope_data[sheet_name] = df[existing_cols].values.tolist()
-                print(sheet_name, ope_data[sheet_name])
+                df = df.where(pd.notnull(df), None)
+                exclude_indices = {17, 18, 19, 20}
+                ope_data[sheet_name] = [item for idx, item in enumerate(df[existing_cols].values.tolist()[:27]) if idx not in exclude_indices]
+                # nc_data = df[existing_cols].values.tolist()[0:17]
+                # across_data = df[existing_cols].values.tolist()[21:27]
+                # ope_data[sheet_name] = nc_data
+                # ope_data[sheet_name].append(across_data)
 
-
-        # print(ope_data)
+        return jsonify({'status': 'success', 'data': json.dumps(ope_data, ensure_ascii=False)})
 
 
 
