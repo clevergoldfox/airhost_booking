@@ -60,6 +60,7 @@
 			$("#fileaddbtn").attr("type", "submit");
 		});
 
+
 		$("#datafile-form").submit(function (event) {
 			event.preventDefault();
 			var formData = new FormData($(this)[0]);
@@ -77,8 +78,17 @@
 						$("#fileaddbtn").attr("type", "button");
 						localStorage.removeItem('operationData');
 						localStorage.setItem('operationData', JSON.stringify(response.data));
-						operation_data = JSON.parse(response.data);
-                        draw_operation_chart(operation_data);
+						const pre_data = JSON.parse(response.data);
+
+                        for (const key in pre_data) {
+                            sheetList.push(key);
+                            operation_data.push([key, pre_data[key]]);
+                        }
+                        sheetNum = sheetList.length;
+                        selSheet = 13;
+                        const disData = operation_data[selSheet-1];
+                        draw_operation_chart(disData);
+                        draw_opedate_pagination();
 						
 					} else {
 						alert("Error: " + response.message);
@@ -90,6 +100,27 @@
 					alert("申し訳ありませんが、もう一度お試しください。");
 				}
 			});
+		});
+
+        //change page number 
+		$("#opedate_paginate").on("click", ".paginate_button", function () {
+			if (!$(this).hasClass('disabled')){
+				if($(this).hasClass('next')){
+					selSheet += 1;
+					console.log("next");
+					
+				} else if($(this).hasClass('previous')){
+					selSheet -= 1;
+					console.log("prev");
+					
+				} 
+				else{
+					selSheet = $(this).attr("data-index");
+				}
+				draw_operation_chart(operation_data[selSheet-1]);
+				draw_opedate_pagination();
+			}
+			
 		});
 		
 		
