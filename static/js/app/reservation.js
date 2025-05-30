@@ -18,15 +18,16 @@ function draw_reservationTable(){
         htmlstr += "</tr></thead>";
         const tableData = reservation_data.slice(1).slice(startIndex, endIndex);
         console.log(tableData);
-        
+        htmlstr += "<tbody>";
         tableData.forEach((item, index) => {
-            htmlstr += "<tbody><tr>\
+            htmlstr += "<tr>\
             <td>" + (startIndex+ index + 1) + "</td>";
             item.forEach((value, i) => {
                 htmlstr += "<td>" + value + "</td>"
             });
-            htmlstr += "</tr></tbody>";
+            htmlstr += "</tr>";
         });
+        htmlstr += "</tbody>";
     } else {
         htmlstr = `<thead>
                     <tr>
@@ -55,7 +56,6 @@ function draw_reservationTable(){
                 </tbody>`
     }
     reservation_table.append(htmlstr);
-
 }
 
 function draw_pagination(){

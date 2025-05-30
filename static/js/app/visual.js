@@ -1,7 +1,8 @@
 var sheetNum = 1;
 var selSheet = 1;
 var sheetList = [];
-
+// var calendarYear = getInitialCalYearString(); // Default year for the calendar
+var calendarYear = 2023; // Default year for the calendar
 /* chart colors default */
 var $chrt_border_color = "#efefef";
 var $chrt_grid_color = "#DDD"
@@ -17,8 +18,20 @@ var $chrt_fifth = "#BD362F";
 /* dark red  */
 var $chrt_mono = "#000";
 
+var reservation_data = JSON.parse(localStorage.getItem('reservationData'))||[];
 
 
+function getInitialCalYearString() {
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const aprilFirst = new Date(currentYear, 3, 1); // Month is 0-indexed: 3 = April
+
+    if (today < aprilFirst) {
+        return String(currentYear - 1);  // Before April 1 => previous year
+    } else {
+        return String(currentYear);      // On or after April 1 => current year
+    }
+}
 
 async function draw_operation_chart(data){
     console.log(data);
@@ -87,7 +100,7 @@ async function draw_operation_chart(data){
     
         /*=============== end bar chart ==============*/
         $("#opedate-mark").empty();
-        $("#opedate-mark").append(`<div class="col xs-2 col-sm-2 justify-items-right"><div style="background-color: #6595b4; width: 50%; height: 20px;"></div></div>
+        $("#opedate-mark").append(`<div class="col xs-2 col-sm-2 justify-items-right mb-4"><div style="background-color: #6595b4; width: 50%; height: 20px;"></div></div>
 									<div class="col xs-2 col-sm-2"><p>: マンスリー+民泊</p></div>
 									<div class="col xs-2 col-sm-2 justify-items-right"><div style="background-color: #7e9d3a; width: 50%; height: 20px;"></div></div>
 									<div class="col xs-2 col-sm-2"><p>: マンスリー</p></div>
@@ -100,16 +113,18 @@ async function draw_operation_chart(data){
         
         for(let i = 0; i < data[1].length; i++){
             if ((i+1) % Math.ceil(data[1].length/4)){
-                htmlstr += `<p>${i+1}: ${data[1][i][0]}
-                                <span class="bg-color-blue text-white px-7px mx-5px">${data[1][i][1]?data[1][i][1]:0}</span>
-                                <span class="bg-color-green text-white px-7px mx-5px">${data[1][i][2]?data[1][i][2]:0}</span>
-                                <span class="bg-color-grey text-white px-7px mx-5px" >${data[1][i][3]?data[1][i][3]:0}</span>
+                htmlstr += `<p class="col-xs-6 col-sm-6">${i+1}: ${data[1][i][0]}</p>
+                            <p class="col-xs-6 col-sm-6 text-center">
+                            <span class="bg-color-blue text-white col-xs-4 col-sm-4 text-center">${data[1][i][1]?data[1][i][1]:0}</span>
+                            <span class="bg-color-green text-white col-xs-4 col-sm-4 text-center">${data[1][i][2]?data[1][i][2]:0}</span>
+                            <span class="bg-color-grey text-white col-xs-4 col-sm-4 text-center" >${data[1][i][3]?data[1][i][3]:0}</span>
                             </p>`;
             } else {
-                htmlstr += `<p>${i+1}: ${data[1][i][0]}
-                                <span class="bg-color-blue text-white px-7px mx-5px">${data[1][i][1]?data[1][i][1]:0}</span>
-                                <span class="bg-color-green text-white px-7px mx-5px">${data[1][i][2]?data[1][i][2]:0}</span>
-                                <span class="bg-color-grey text-white px-7px mx-5px" >${data[1][i][3]?data[1][i][3]:0}</span>
+                htmlstr += `<p class="col-xs-6 col-sm-6">${i+1}: ${data[1][i][0]}</p>
+                            <p class="col-xs-6 col-sm-6 text-center">
+                                <span class="bg-color-blue text-white col-xs-4 col-sm-4 text-center">${data[1][i][1]?data[1][i][1]:0}</span>
+                                <span class="bg-color-green text-white col-xs-4 col-sm-4 text-center">${data[1][i][2]?data[1][i][2]:0}</span>
+                                <span class="bg-color-grey text-white col-xs-4 col-sm-4 text-center" >${data[1][i][3]?data[1][i][3]:0}</span>
                             </p></div><div class="col-xs-3 col-sm-3">`;
             }
         }
@@ -120,6 +135,7 @@ async function draw_operation_chart(data){
 }
 
 function draw_opedate_pagination() {
+    $("#opedate-chart-title").text(`${sheetList[selSheet-1]}`);
     //============　pagination ===================
     const pagination = $("#opedate_paginate");
     pagination.empty();
@@ -183,8 +199,8 @@ function draw_opedate_pagination() {
     htmlstr += "</ul>";
     pagination.append(htmlstr);
 
+    //================ opedate page info =================
     $("#opedate-info").empty();
-    console.log("opedate");
     $("#opedate-info").append(`Showing 
         <span class="txt-color-darken">${sheetList[selSheet-1]}</span>
          to 
@@ -193,7 +209,165 @@ function draw_opedate_pagination() {
         <span class="text-primary">${selSheet}</span>
         entries`
     );
-    console.log("opedate--");
+}
+
+function draw_reservation_calendar() {
     
+    const months = [
+        { name: "April", days: 30 },
+        { name: "May", days: 31 },
+        { name: "June", days: 30 },
+        { name: "July", days: 31 },
+        { name: "August", days: 31 },
+        { name: "September", days: 30 },
+        { name: "October", days: 31 },
+        { name: "November", days: 30 },
+        { name: "December", days: 31 },
+        { name: "January", days: 31 },
+        { name: "February", days: 28 }, // Adjust later if leap year
+        { name: "March", days: 31 }
+    ];
+
+    // Leap year adjustment for February of next year
+    const febYear = calendarYear + 1;
+    const isLeap = (febYear % 4 === 0 && febYear % 100 !== 0) || (febYear % 400 === 0);
+    if (isLeap) months[10].days = 29;
+
+    const thead = document.getElementById("calendar-thead");
+    thead.innerHTML = "";
+    const monthRow = document.createElement("tr");
+    const dayRow = document.createElement("tr");
+    const roomCell = document.createElement("th");
+    roomCell.rowSpan = 2;
+    roomCell.innerText = "部屋番号";
+    monthRow.appendChild(roomCell);
+    months.forEach(month => {
+        const monthCell = document.createElement("th");
+        monthCell.colSpan = month.days;
+        monthCell.innerText = month.name;
+        monthRow.appendChild(monthCell);
+
+        for (let d = 1; d <= month.days; d++) {
+            const dayCell = document.createElement("th");
+            dayCell.innerText = d;
+            dayRow.appendChild(dayCell);
+        }
+    });
+
+    thead.appendChild(monthRow);
+    thead.appendChild(dayRow);
+
+    const tbody = document.getElementById("calendar-tbody");
+    tbody.innerHTML = "";
+
+    console.log(reservation_data);
+    var calendarData = [];
+    reservation_data.forEach(item=>{
+        const index = calendarData.findIndex(data => data[0] == item[5]);
+        if (index === -1) {
+            calendarData.push([item[5], [[item[3], item[4]]]]);
+        } else {
+            calendarData[index][1].push([item[3], item[4]]); // Assuming item[1] is the count of reservations
+        }
+    })
+    console.log(calendarData.slice(1));
+
+
+    calendarData.slice(1).forEach(item => {
+        const roomRow = document.createElement("tr");
+        const roomCell = document.createElement("td");
+        roomCell.innerText = item[0];
+        roomRow.appendChild(roomCell);
+        const dates = item[1].sort((a,b) => new Date(a[0]) - new Date(b[0]));
+        let preDate = new Date("2023-03-31"); // Start date for the calendar
+        let reminder = 0;
+        for (let i = 0; i < dates.length; i++) {
+            let curInDate = new Date(dates[i][0]);
+            let curOutDate = new Date(dates[i][1]);
+            let status = true;
+            if(curInDate < new Date("2023-04-01")){
+                if(curOutDate < new Date("2023-04-01")){
+                    status = false;
+                } else if(curOutDate > new Date("2024-03-31")){
+                    curInDate = new Date("2024-03-31");
+                    curOutDate = new Date("2024-03-31");
+                }
+            } else if (curInDate > new Date("2024-03-31")){
+                status = false;
+            } else {
+                if(curOutDate > new Date("2024-03-31")){
+                    curOutDate = new Date("2024-03-31");
+                }
+            }
+
+            if(status){
+
+                if(i > 0){
+                    preDate = new Date(item[1][i - 1][1]);
+                } 
+                if(i == dates.length - 1){
+                    reminder = Math.round((new Date("2024-03-31") - curOutDate) / (1000 * 60 * 60 * 24));
+                    console.log("reminder:", reminder);
+                }
+                let preTds = 0; // Previous days to fill before the first reservation
+                let tdCol = 1;
+                if(preDate >= curInDate){
+                    console.log("warning:", item[0]);
+                    preTds = 0;
+                    const repeat = Math.round((curInDate - preDate) / (1000 * 60 * 60 * 24)); // Include the day of the reservation
+                    tdCol = Math.round((curOutDate - preDate) / (1000 * 60 * 60 * 24)); // Include the day of the reservation
+                    
+                }else{
+                    preTds = Math.round((curInDate - preDate) / (1000 * 60 * 60 * 24))-1;
+                    tdCol = Math.round((curOutDate - curInDate) / (1000 * 60 * 60 * 24))+1;
+                }
+                console.log("preTds:", preTds, "tdCol:", tdCol);
+                
+                for(let i = 0; i < preTds; i++){
+                    const calendarCell = document.createElement("td");
+                    roomRow.appendChild(calendarCell);
+                }
+                const calendarCell = document.createElement("td");
+                calendarCell.colSpan = tdCol;
+                calendarCell.style.backgroundColor = "yellow";
+                calendarCell.title = `${dates[i][0]} - ${dates[i][1]}`; // Assuming ele[0] is the start date and ele[1] is the end date
+                roomRow.appendChild(calendarCell);
+            }
+        
+        }
+        for(let i = 0; i < reminder; i++){
+            const calendarCell = document.createElement("td");
+            roomRow.appendChild(calendarCell);
+        }
+        tbody.appendChild(roomRow);
+    });
 
 }
+
+function nationality_chart() {
+    let data = [];
+    var nationalAnalysis = {};
+    reservation_data.forEach(item => {
+        const phoneNumber = String(Number(item[9].replace(/[\s+]/g, "")).toFixed(0)).replace(/[^0-9+]/g, ''); // Clean the phone number
+        console.log(phoneNumber);
+        if(phoneNumber.length < 10 || phoneNumber.length > 15){
+            console.log("Invalid phone number length:", phoneNumber);
+            return;
+        } else{
+            const nationality = phoneNumber? libphonenumber.parsePhoneNumber(String(`+${phoneNumber}`))?.country: "";
+            console.log(nationality);
+            data.push(nationality);
+        }
+    });
+    
+    data.forEach(item=>{
+        if (nationalAnalysis[item]) {
+            nationalAnalysis[item]++;
+        } else {
+            nationalAnalysis[item] = 1;
+        }
+    });
+    console.log(nationalAnalysis);
+    
+}
+

@@ -4,7 +4,6 @@
 	$(document).ready(function () {
 
 		pageSetUp();
-
 		var me = {};
 		if(localStorage.getItem("me")){
 			const medata = JSON.parse(localStorage.getItem("me"));
@@ -19,30 +18,33 @@
 				"avatar": medata[8]
 			};
 		}
-		console.log(me);
-
-		if(me?.role == "admin" || me?.role == "manager"){
-			$("#usermanage-nav").removeClass("d-none");
+		if (me){
+			if(me?.role == "admin" || me?.role == "manager"){
+				$("#usermanage-nav").removeClass("d-none");
+			} else {
+				$("#usermanage-nav").addClass("d-none");
+			}
+			
+			//================== start top bar ===============//
+			
+			if (me.avatar) {
+				$("#top-avatar").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}".replace("default.png", me.avatar));
+			} else {
+				$("#top-avatar").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}");
+			}
+			$("#top-name").text(me.firstname && me.lastname ? me.firstname + " " + me.lastname + "さん" : "ユーザーさん");
+	
+			$("#profileedit").click(async function () {
+				location.href = await "/profile";
+			});
+			$("#logout").click(function () {
+				localStorage.removeItem("me");
+				location.href = "/login";
+			});
 		} else {
-			$("#usermanage-nav").addClass("d-none");
+				// window.location.href = "/login";
 		}
-		
-		//================== start top bar ===============//
-		
-		if (me.avatar) {
-			$("#top-avatar").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}".replace("default.png", me.avatar));
-		} else {
-			$("#top-avatar").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}");
-		}
-		$("#top-name").text(me.firstname && me.lastname ? me.firstname + " " + me.lastname + "さん" : "ユーザーさん");
 
-		$("#profileedit").click(async function () {
-			location.href = await "/profile";
-		});
-		$("#logout").click(function () {
-			localStorage.removeItem("me");
-			location.href = "/login";
-		});
 		//=============== end top bar ================//
 		
 		//=============== start visualization data  ==============//
@@ -137,6 +139,14 @@
 			}
 		});
 		//=============== end reservation data  ==============//
+
+        //================= draw reservation calendar ============//
+        draw_reservation_calendar();
+		
+        //================= draw nationality configuration ============//
+		nationality_chart();
+
+		
 	})
 
 </script>

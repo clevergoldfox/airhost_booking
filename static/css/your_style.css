@@ -37,7 +37,7 @@
     background: #f0f0f0;
 }
 
-#dt_basic {
+.dt_basic {
     white-space: nowrap;
     width: max-content;
     border-collapse: collapse;
@@ -47,11 +47,23 @@
     position: relative;
 }
 
-#dt_basic tr th:nth-of-type(1),
+.dt_basic tr th:nth-of-type(1),
 td:nth-of-type(1) {
     background-color: #eee;
     position: sticky;
     left: 0;
+    z-index: 1000;
+}
+
+#calendar-thead tr:nth-of-type(2) th:nth-of-type(1){
+    position: relative;
+    background-color: rgb(240, 237, 237);
+    z-index: 1!important;
+}
+
+#calendar-thead tr th {
+    padding: 3px;
+    text-align: center;
 }
 
 #dt_basic_paginate ul li:hover{
@@ -103,6 +115,10 @@ td:nth-of-type(1) {
 
 .mb-3 {
     margin-bottom: 1rem!important;
+}
+
+.mb-4 {
+    margin-bottom: 2rem!important;
 }
 
 .ml-3 {

@@ -131,27 +131,30 @@ def users_page():
 @flask_app.route('/operation', methods=['GET', 'POST'])
 def operation():
     if request.method == 'POST':
-        file = request.files['datafile']
+        try:
+            file = request.files['datafile']
 
-        excel_data = pd.read_excel(file, sheet_name=None)  # sheet_name=None reads all sheets
-        
-        # Columns to extract
-        columns_to_extract = ['部屋番号', 'マンスリー+民泊', 'マンスリー', '民泊使用日数']
+            excel_data = pd.read_excel(file, sheet_name=None)  # sheet_name=None reads all sheets
+            
+            # Columns to extract
+            columns_to_extract = ['部屋番号', 'マンスリー+民泊', 'マンスリー', '民泊使用日数']
 
-        ope_data = {}
+            ope_data = {}
 
-        for sheet_name, df in excel_data.items():
-            existing_cols = [col for col in columns_to_extract if col in df.columns]
-            if existing_cols:
-                df = df.where(pd.notnull(df), None)
-                exclude_indices = {17, 18, 19, 20}
-                ope_data[sheet_name] = [item for idx, item in enumerate(df[existing_cols].values.tolist()[:27]) if idx not in exclude_indices]
-                # nc_data = df[existing_cols].values.tolist()[0:17]
-                # across_data = df[existing_cols].values.tolist()[21:27]
-                # ope_data[sheet_name] = nc_data
-                # ope_data[sheet_name].append(across_data)
+            for sheet_name, df in excel_data.items():
+                existing_cols = [col for col in columns_to_extract if col in df.columns]
+                if existing_cols:
+                    df = df.where(pd.notnull(df), None)
+                    exclude_indices = {17, 18, 19, 20}
+                    ope_data[sheet_name] = [item for idx, item in enumerate(df[existing_cols].values.tolist()[:27]) if idx not in exclude_indices]
+                    # nc_data = df[existing_cols].values.tolist()[0:17]
+                    # across_data = df[existing_cols].values.tolist()[21:27]
+                    # ope_data[sheet_name] = nc_data
+                    # ope_data[sheet_name].append(across_data)
 
-        return jsonify({'status': 'success', 'data': json.dumps(ope_data, ensure_ascii=False)})
+            return jsonify({'status': 'success', 'data': json.dumps(ope_data, ensure_ascii=False)})
+        except Exception as e:
+            return jsonify({'status': 'success', 'data': json.dumps([])})
 
 
 
@@ -162,13 +165,16 @@ def operation():
 @flask_app.route('/reservation', methods=['GET', 'POST'])
 def reservation():
     if request.method == 'POST':
-        file = request.files['datafile']
+        try:
+            file = request.files['datafile']
 
-        pre_data = []
-        file.stream.seek(0)  # reset file pointer
-        file_content = csv.reader(file.stream.read().decode('utf-8-sig').splitlines())
+            pre_data = []
+            file.stream.seek(0)  # reset file pointer
+            file_content = csv.reader(file.stream.read().decode('utf-8-sig').splitlines())
 
-        return jsonify({'status': 'success', 'data': list(file_content)})
+            return jsonify({'status': 'success', 'data': list(file_content)})
+        except Exception as e:
+            return jsonify({'status': 'success', 'data': list([])})
 
     return render_template('reservation.html')
     if request.method == 'GET':
