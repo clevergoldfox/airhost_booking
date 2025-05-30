@@ -1,3 +1,4 @@
+<script src="{{ url_for('static', filename='js/app/countrycode.js')}}"></script>
 <script src="{{ url_for('static', filename='js/app/visual.js')}}"></script>
 <script type="text/javascript">
 
@@ -87,7 +88,7 @@
                             operation_data.push([key, pre_data[key]]);
                         }
                         sheetNum = sheetList.length;
-                        selSheet = 13;
+                        selSheet = 1;
                         const disData = operation_data[selSheet-1];
                         draw_operation_chart(disData);
                         draw_opedate_pagination();
@@ -146,7 +147,64 @@
         //================= draw nationality configuration ============//
 		nationality_chart();
 
-		
+
+		if ($('#bar-graph').length) {
+
+			Morris.Bar({
+				element : 'bar-graph',
+				data : [{
+					x : '2011 Q1',
+					y : 0
+				}, {
+					x : '2011 Q2',
+					y : 1
+				}, {
+					x : '2011 Q3',
+					y : 2
+				}, {
+					x : '2011 Q4',
+					y : 3
+				}, {
+					x : '2012 Q1',
+					y : 4
+				}, {
+					x : '2012 Q1',
+					y : 4
+				}, {
+					x : '2012 Q1',
+					y : 4
+				}, {
+					x : '2012 Q1',
+					y : 4
+				}, {
+					x : '2012 Q2',
+					y : 5
+				}, {
+					x : '2012 Q3',
+					y : 6
+				}, {
+					x : '2012 Q4',
+					y : 7
+				}, {
+					x : '2013 Q1',
+					y : 8
+				}],
+				xkey : 'x',
+				ykeys : ['y'],
+				labels : ['Y'],
+				barColors : function(row, series, type) {
+					if (type === 'bar') {
+						var red = Math.ceil(150 * row.y / this.ymax);
+						return 'rgb(' + red + ',0,0)';
+					} else {
+						return '#000';
+					}
+				}
+			});
+
+			}
+
+
 	})
 
 </script>

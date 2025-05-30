@@ -135,7 +135,7 @@ async function draw_operation_chart(data){
 }
 
 function draw_opedate_pagination() {
-    $("#opedate-chart-title").text(`${sheetList[selSheet-1]}`);
+    $("#opedate-chart-title").text(`稼働日数(${sheetList[selSheet-1]})`);
     //============　pagination ===================
     const pagination = $("#opedate_paginate");
     pagination.empty();
@@ -201,12 +201,13 @@ function draw_opedate_pagination() {
 
     //================ opedate page info =================
     $("#opedate-info").empty();
-    $("#opedate-info").append(`Showing 
-        <span class="txt-color-darken">${sheetList[selSheet-1]}</span>
-         to 
-        <span class="txt-color-darken">${sheetNum}</span>
-         of 
-        <span class="text-primary">${selSheet}</span>
+    $("#opedate-info").append(`稼働日数 
+        <span class="txt-color-darken">(${sheetList[selSheet-1]})</span>
+         
+        <span class="txt-color-darken">第二${selSheet}</span>
+        <span class="txt-color-darken">ページ</span>
+        <span class="txt-color-darken">全</span> 
+        <span class="text-primary">${sheetNum}個中</span>
         entries`
     );
 }
@@ -214,18 +215,18 @@ function draw_opedate_pagination() {
 function draw_reservation_calendar() {
     
     const months = [
-        { name: "April", days: 30 },
-        { name: "May", days: 31 },
-        { name: "June", days: 30 },
-        { name: "July", days: 31 },
-        { name: "August", days: 31 },
-        { name: "September", days: 30 },
-        { name: "October", days: 31 },
-        { name: "November", days: 30 },
-        { name: "December", days: 31 },
-        { name: "January", days: 31 },
-        { name: "February", days: 28 }, // Adjust later if leap year
-        { name: "March", days: 31 }
+        { name: "4月", days: 30 },
+        { name: "5月", days: 31 },
+        { name: "6月", days: 30 },
+        { name: "7月", days: 31 },
+        { name: "8月", days: 31 },
+        { name: "9月", days: 30 },
+        { name: "10月", days: 31 },
+        { name: "11月", days: 30 },
+        { name: "12月", days: 31 },
+        { name: "1月", days: 31 },
+        { name: "2月", days: 28 }, // Adjust later if leap year
+        { name: "3月", days: 31 }
     ];
 
     // Leap year adjustment for February of next year
@@ -329,7 +330,7 @@ function draw_reservation_calendar() {
                 }
                 const calendarCell = document.createElement("td");
                 calendarCell.colSpan = tdCol;
-                calendarCell.style.backgroundColor = "yellow";
+                calendarCell.style.backgroundColor = "#7e9d3a";
                 calendarCell.title = `${dates[i][0]} - ${dates[i][1]}`; // Assuming ele[0] is the start date and ele[1] is the end date
                 roomRow.appendChild(calendarCell);
             }
@@ -345,7 +346,46 @@ function draw_reservation_calendar() {
 }
 
 function nationality_chart() {
-    let data = [];
+     // start　initial environment sets
+     var pieOptions = {
+        //Boolean - Whether we should show a stroke on each segment
+        segmentShowStroke: true,
+        //String - The colour of each segment stroke
+        segmentStrokeColor: "#fff",
+        //Number - The width of each segment stroke
+        segmentStrokeWidth: 2,
+        //Number - Amount of animation steps
+        animationSteps: 100,
+        //String - types of animation
+        animationEasing: "easeOutBounce",
+        //Boolean - Whether we animate the rotation of the Doughnut
+        animateRotate: true,
+        //Boolean - Whether we animate scaling the Doughnut from the centre
+        animateScale: false,
+        //Boolean - Re-draw chart on page resize
+        responsive: true,
+        //String - A legend template
+        // {% raw %}
+        legendTemplate: "<ul class=\"<%=name.toLowerCase()%>-legend\"><% for (var i=0; i<segments.length; i++){ %><li><span style=\"background-color:<%=segments[i].fillColor%>\"></span></li><% } %></ul>"
+        // {% endraw %}
+    };
+    
+    const colors = {
+        "US": "#6595b4", // Blue
+        "JP": "#7e9d3a", // Green
+        "CN": "#FF9F01", // Orange
+        "KR": "#BD362F", // Dark Red
+        "AU": "#E24913", // Red
+        "SG": "#333", // Grey
+        "GB": "#666", // Dark Grey
+        "IN": "#999", // Light Grey
+        "other": "#DDD" // Default color for others
+    }
+    // end　initial environment sets
+    console.log("reservation_data",reservation_data);
+    
+
+    let data = {};
     var nationalAnalysis = {};
     reservation_data.forEach(item => {
         const phoneNumber = String(Number(item[9].replace(/[\s+]/g, "")).toFixed(0)).replace(/[^0-9+]/g, ''); // Clean the phone number
@@ -356,18 +396,80 @@ function nationality_chart() {
         } else{
             const nationality = phoneNumber? libphonenumber.parsePhoneNumber(String(`+${phoneNumber}`))?.country: "";
             console.log(nationality);
-            data.push(nationality);
+            if(data[nationality]){
+                data[nationality].push(item);
+            } else {
+                data[nationality] = [item];
+            }
         }
     });
+
+    console.log("analysisData", data);
     
-    data.forEach(item=>{
-        if (nationalAnalysis[item]) {
-            nationalAnalysis[item]++;
-        } else {
-            nationalAnalysis[item] = 1;
-        }
-    });
+    for(const key in data){
+        nationalAnalysis[key] = data[key].length;
+    }
+    // data.forEach(item=>{
+    //     if (nationalAnalysis[item]) {
+    //         nationalAnalysis[item]++;
+    //     } else {
+    //         nationalAnalysis[item] = 1;
+    //     }
+    // });
+
     console.log(nationalAnalysis);
+    
+
+    const reservations = reservation_data.length;
+    console.log(reservations);
+    
+    let nationalChartData = [];
+    let others = 0;
+    for (const key in nationalAnalysis){
+    // nationalAnalysis.forEach((value, key) => {
+        if(nationalAnalysis[key] >= reservations/20 || key == "US"){
+            // nationalChartData[key] = value;
+            nationalChartData.push({
+                "value": nationalAnalysis[key],
+                "color": colors[key] || colors["other"],
+                "label": countryCodeToJapanese[key]
+            });
+        } else {
+            others += nationalAnalysis[key];
+        }
+    }
+    nationalChartData.push({
+        value: others,
+        color: colors["other"],
+        label: "その他"
+    });
+
+    // render chart
+    var ctx = document.getElementById("national-pieChart").getContext("2d");
+    var myNewChart = new Chart(ctx).Pie(nationalChartData, pieOptions);
+    
+    $("#nation-footer").empty();
+    var htmlstr = "";
+    for (let i = 0; i < nationalChartData.length; i++) {
+        if( i % 4 == 0 && i != 0) {
+            htmlstr += `</div>`;
+            htmlstr += `<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 d-flex">`;
+        } else if (i == 0) {
+            htmlstr += `<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 d-flex">`;
+        } else if( i == nationalChartData.length) {
+            htmlstr += `</div>`;
+        }
+        htmlstr += `<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 flex-column text-center">
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 txt-color-white" style="background-color: ${nationalChartData[i]["color"]};">${nationalChartData[i]["label"]}</div>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <p>予約数: ${nationalChartData[i]["value"]}</p><p>パーセント: ${Math.round(nationalChartData[i]["value"]/reservations*100)}</p>
+                        </div>
+                    </div>`;
+    }
+    $("#nation-footer").append(htmlstr);
+    
+    // bar graph display
+    
     
 }
 
