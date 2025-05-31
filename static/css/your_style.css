@@ -85,7 +85,7 @@ td:nth-of-type(1) {
 }
 
 .flex-column {
-    display: flex!important;
+    display: flex;
     flex-direction: column!important;
 }
 

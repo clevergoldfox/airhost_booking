@@ -19,7 +19,10 @@ var $chrt_fifth = "#BD362F";
 var $chrt_mono = "#000";
 
 var reservation_data = JSON.parse(localStorage.getItem('reservationData'))||[];
-
+if(!reservation_data.length){
+    document.getElementById("national-chart").style.display = "none"; // Hide the national chart if no data is available
+}
+var nationalChartData = {};
 
 function getInitialCalYearString() {
     const today = new Date();
@@ -389,13 +392,10 @@ function nationality_chart() {
     var nationalAnalysis = {};
     reservation_data.forEach(item => {
         const phoneNumber = String(Number(item[9].replace(/[\s+]/g, "")).toFixed(0)).replace(/[^0-9+]/g, ''); // Clean the phone number
-        console.log(phoneNumber);
         if(phoneNumber.length < 10 || phoneNumber.length > 15){
-            console.log("Invalid phone number length:", phoneNumber);
             return;
         } else{
             const nationality = phoneNumber? libphonenumber.parsePhoneNumber(String(`+${phoneNumber}`))?.country: "";
-            console.log(nationality);
             if(data[nationality]){
                 data[nationality].push(item);
             } else {
@@ -404,6 +404,7 @@ function nationality_chart() {
         }
     });
 
+    nationalChartData = data;
     console.log("analysisData", data);
     
     for(const key in data){
@@ -416,20 +417,16 @@ function nationality_chart() {
     //         nationalAnalysis[item] = 1;
     //     }
     // });
-
-    console.log(nationalAnalysis);
     
-
     const reservations = reservation_data.length;
-    console.log(reservations);
     
-    let nationalChartData = [];
+    let nationalPieData = [];
     let others = 0;
     for (const key in nationalAnalysis){
     // nationalAnalysis.forEach((value, key) => {
         if(nationalAnalysis[key] >= reservations/20 || key == "US"){
-            // nationalChartData[key] = value;
-            nationalChartData.push({
+            // nationalPieData[key] = value;
+            nationalPieData.push({
                 "value": nationalAnalysis[key],
                 "color": colors[key] || colors["other"],
                 "label": countryCodeToJapanese[key]
@@ -438,38 +435,143 @@ function nationality_chart() {
             others += nationalAnalysis[key];
         }
     }
-    nationalChartData.push({
-        value: others,
-        color: colors["other"],
-        label: "その他"
-    });
+    if(Object.keys(nationalAnalysis).length){
+        nationalPieData.push({
+            value: others,
+            color: colors["other"],
+            label: "その他"
+        });
+    }
 
     // render chart
     var ctx = document.getElementById("national-pieChart").getContext("2d");
-    var myNewChart = new Chart(ctx).Pie(nationalChartData, pieOptions);
+    var myNewChart = new Chart(ctx).Pie(nationalPieData, pieOptions);
     
     $("#nation-footer").empty();
     var htmlstr = "";
-    for (let i = 0; i < nationalChartData.length; i++) {
+    for (let i = 0; i < nationalPieData.length; i++) {
         if( i % 4 == 0 && i != 0) {
             htmlstr += `</div>`;
             htmlstr += `<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 d-flex">`;
         } else if (i == 0) {
             htmlstr += `<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 d-flex">`;
-        } else if( i == nationalChartData.length) {
+        } else if( i == nationalPieData.length) {
             htmlstr += `</div>`;
         }
         htmlstr += `<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 flex-column text-center">
-                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 txt-color-white" style="background-color: ${nationalChartData[i]["color"]};">${nationalChartData[i]["label"]}</div>
+                        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 txt-color-white" style="background-color: ${nationalPieData[i]["color"]};">${nationalPieData[i]["label"]}</div>
                         <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-                        <p>予約数: ${nationalChartData[i]["value"]}</p><p>パーセント: ${Math.round(nationalChartData[i]["value"]/reservations*100)}</p>
+                        <p>予約数: ${nationalPieData[i]["value"]}件</p><p>パーセント: ${Math.round(nationalPieData[i]["value"]/reservations*100)}%</p>
                         </div>
                     </div>`;
     }
     $("#nation-footer").append(htmlstr);
     
     // bar graph display
-    
-    
 }
 
+function draw_national_chart () {
+    const national = $("#selNation").val();
+    const type = $("#analysisType").val();
+    var disData= {};
+    if(type == "year"){
+        if(nationalChartData[national]){
+            nationalChartData[national].forEach(item=>{
+                const year = item[18].split("/")[0];
+                if(disData[year]){
+                    disData[year]++;
+                } else {
+                    disData[year] = 1;
+                }
+            });
+        } 
+    } else {
+        const year = $("#selYear").val();
+        if(nationalChartData[national]){
+            nationalChartData[national].forEach(item=>{
+                if(item[18].split("/")[0] == year){
+                    const month = item[18].split("/")[1]
+                    if(disData[month]){
+                        disData[month]++;
+                    } else {
+                        disData[month] = 1;
+                    }
+
+                }
+            });
+            for (let i=1; i <= 12; i++) {
+                const monthStr = `${i}`;
+                if (!disData[monthStr]) {
+                    disData[monthStr] = 0; 
+                }
+            }
+        } 
+
+    }
+    console.log("disData",disData);
+    let chartData = [];
+    for(const key in disData){
+        chartData.push({x: key, y: disData[key]});
+    }
+
+    if ($('#bar-graph').length) {
+        $('#bar-graph').empty(); // Clear previous chart
+
+        Morris.Bar({
+            element : 'bar-graph',
+            data : chartData,
+            xkey : 'x',
+            ykeys : ['y'],
+            labels : ['Y'],
+            barColors : function(row, series, type) {
+                if (type === 'bar') {
+                    var green = Math.ceil(150 * row.y / this.ymax);
+                    return 'rgb(0,'+ green +',0)';
+                } else {
+                    return '#000';
+                }
+            }
+        });
+
+        }
+
+    $("#nation-chart-footer").empty();
+    var htmlstr = "";
+    let i = 0;
+    const length = Object.keys(disData).length;
+    const maxColor = Math.max(...Object.values(disData));
+    console.log(length, maxColor);
+    let preValue = 0;
+    const typeCharater = type == "year"? "年" : "月";
+    
+    for (const key in disData) {
+        if( i % 4 == 0 && i != 0) {
+            htmlstr += `</div>`;
+            htmlstr += `<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 d-flex">`;
+        } else if (i == 0) {
+            htmlstr += `<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 d-flex">`;
+        } else if( i == length) {
+            htmlstr += `</div>`;
+        }
+        if( i && i< length) {
+            htmlstr += `<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 flex-column text-center">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 txt-color-white" style="background-color: rgb(0,${ Math.ceil(150 * disData[key] / maxColor)},0);">${key}${typeCharater}</div>
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <p>予約数: ${disData[key]}件</p><p>増加率: ${Math.round((disData[key]-preValue)/preValue*100)}%</p>
+                            </div>
+                        </div>`;
+        } else {
+            htmlstr += `<div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 flex-column text-center">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 txt-color-white" style="background-color: rgb(0,${ Math.ceil(150 * disData[key] / maxColor)},0);">${key}${typeCharater}</div>
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <p>予約数: ${disData[key]}件</p><p>増加率: -</p>
+                            </div>
+                        </div>`;
+        }
+        i++;
+        preValue = disData[key];
+    }
+    $("#nation-chart-footer").append(htmlstr);
+
+    
+}
