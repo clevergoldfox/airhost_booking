@@ -28,8 +28,6 @@ $("#createuser-form").submit(function (event) {
             contentType: false,
             processData: false,
             success: function (response) {
-                console.log(response);
-                
                 location.href = "/users-page"; // Redirect to login page on success
             },
             error: function (xhr, status, error) {
@@ -52,7 +50,6 @@ $("#users_data").on("click", ".edituserbtn", function(){
         "role": $(this).closest("tr").find('td').eq(7).text(),
         "avatar": $(this).closest("tr").find('img').attr('src')
     };
-    console.log(curUser);
     edituserform(curUser);
 });
 

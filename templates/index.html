@@ -356,22 +356,45 @@
 
 						<!-- widget div-->
 						<div>
-
+							
 							<!-- widget edit box -->
 							<div class="jarviswidget-editbox">
 								<!-- This area used as dropdown edit box -->
 								<input type="text">
 							</div>
 							<!-- end widget edit box -->
-
+							
 							<!-- widget content -->
 							<div class="widget-body no-padding">
-
-								<div id="sales-graph" class="chart no-padding"></div>
-
+								
+								
+								<div id="ota-graph" class="chart no-padding"></div>
+								
 							</div>
 							<!-- end widget content -->
-
+							
+							<div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 d-flex justify-space-around">
+								<section class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+									<label class="select">分析方式（年別、月別）
+										<select name="otaAnalysisType" id="otaAnalysisType">
+											<option value="year" selected>年別</option>
+											<option value="month">月別</option>
+										</select> <i></i> </label>
+								</section>
+								
+								<section class="col-xs-3 col-sm-3 col-md-3 col-lg-3 d-none" id="otaSelYearDiv" >
+									<label class="select">年選択 
+										<select name="otaSelYear"	id="otaSelYear">
+											<option value="2023" selected="true">2023年</option>
+											<option value="2024">2024年</option>
+											<option value="2025">2025年</option>
+										</select> <i></i> </label>
+								</section>
+								<button class="btn btn-success" id="view-ota-chart" onclick="draw_ota_graph()">見る</button>
+							</div>
+							<div id="ota-table">
+								
+							</div>
 						</div>
 						<!-- end widget div -->
 
@@ -384,7 +407,7 @@
 			</div>
 
 			<!-- end OTA分析 row -->
-
+			<button type="button" class="btn btn-info btn-lg" data-toggle="modal" data-target="#myModal">Open Modal</button>
 
 		</section>
 		<!-- end widget grid -->
@@ -394,6 +417,27 @@
 
 </div>
 <!-- END MAIN PANEL -->
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+      
+    </div>
+  </div>
 
 {% include 'layout/footer.html' %}
 

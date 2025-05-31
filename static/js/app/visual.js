@@ -23,6 +23,7 @@ if(!reservation_data.length){
     document.getElementById("national-chart").style.display = "none"; // Hide the national chart if no data is available
 }
 var nationalChartData = {};
+var otaChartData = {};
 
 function getInitialCalYearString() {
     const today = new Date();
@@ -37,7 +38,6 @@ function getInitialCalYearString() {
 }
 
 async function draw_operation_chart(data){
-    console.log(data);
     
     /* ================  bar chart ================*/
     
@@ -182,7 +182,6 @@ function draw_opedate_pagination() {
             htmlstr += `<li class="paginate_button" aria-controls="dt_basic" tabindex="0" data-index="1"><span>${sheetList[0]}</span></li>`;
             htmlstr += `<li class="paginate_button disabled"><span>...</span></li>`;
             for (let i = selSheet - 2; i <= selSheet/1 + 2; i++) {
-                console.log(i);
                 
                 if (i == selSheet) {
                     htmlstr += `<li class="paginate_button active" aria-controls="dt_basic" tabindex="0" data-index="${i}"><span>${sheetList[i-1]}</span></li>`;
@@ -264,17 +263,15 @@ function draw_reservation_calendar() {
     const tbody = document.getElementById("calendar-tbody");
     tbody.innerHTML = "";
 
-    console.log(reservation_data);
     var calendarData = [];
-    reservation_data.forEach(item=>{
+    reservation_data.forEach((item, ind)=>{
         const index = calendarData.findIndex(data => data[0] == item[5]);
         if (index === -1) {
-            calendarData.push([item[5], [[item[3], item[4]]]]);
+            calendarData.push([item[5], [[item[3], item[4], ind]]]);
         } else {
-            calendarData[index][1].push([item[3], item[4]]); // Assuming item[1] is the count of reservations
+            calendarData[index][1].push([item[3], item[4], ind]); // Assuming item[1] is the count of reservations
         }
     })
-    console.log(calendarData.slice(1));
 
 
     calendarData.slice(1).forEach(item => {
@@ -311,12 +308,10 @@ function draw_reservation_calendar() {
                 } 
                 if(i == dates.length - 1){
                     reminder = Math.round((new Date("2024-03-31") - curOutDate) / (1000 * 60 * 60 * 24));
-                    console.log("reminder:", reminder);
                 }
                 let preTds = 0; // Previous days to fill before the first reservation
                 let tdCol = 1;
                 if(preDate >= curInDate){
-                    console.log("warning:", item[0]);
                     preTds = 0;
                     const repeat = Math.round((curInDate - preDate) / (1000 * 60 * 60 * 24)); // Include the day of the reservation
                     tdCol = Math.round((curOutDate - preDate) / (1000 * 60 * 60 * 24)); // Include the day of the reservation
@@ -325,15 +320,19 @@ function draw_reservation_calendar() {
                     preTds = Math.round((curInDate - preDate) / (1000 * 60 * 60 * 24))-1;
                     tdCol = Math.round((curOutDate - curInDate) / (1000 * 60 * 60 * 24))+1;
                 }
-                console.log("preTds:", preTds, "tdCol:", tdCol);
                 
                 for(let i = 0; i < preTds; i++){
                     const calendarCell = document.createElement("td");
                     roomRow.appendChild(calendarCell);
                 }
                 const calendarCell = document.createElement("td");
+                calendarCell.className = "ope-td";
+                calendarCell.dataset.index = `${dates[i][2]}`;
+                // calendarCell.index = `${dates[i][2]}`; // Assuming ele[0] is the start date and ele[1] is the end date
+                // calendarCell.typeCharater = "button";
+                // calendarCell.ToggleEvent = "modal";
+                // calendarCell.EventTarget = "#myModal";
                 calendarCell.colSpan = tdCol;
-                calendarCell.style.backgroundColor = "#7e9d3a";
                 calendarCell.title = `${dates[i][0]} - ${dates[i][1]}`; // Assuming ele[0] is the start date and ele[1] is the end date
                 roomRow.appendChild(calendarCell);
             }
@@ -385,7 +384,6 @@ function nationality_chart() {
         "other": "#DDD" // Default color for others
     }
     // end　initial environment sets
-    console.log("reservation_data",reservation_data);
     
 
     let data = {};
@@ -405,7 +403,6 @@ function nationality_chart() {
     });
 
     nationalChartData = data;
-    console.log("analysisData", data);
     
     for(const key in data){
         nationalAnalysis[key] = data[key].length;
@@ -508,7 +505,6 @@ function draw_national_chart () {
         } 
 
     }
-    console.log("disData",disData);
     let chartData = [];
     for(const key in disData){
         chartData.push({x: key, y: disData[key]});
@@ -540,7 +536,6 @@ function draw_national_chart () {
     let i = 0;
     const length = Object.keys(disData).length;
     const maxColor = Math.max(...Object.values(disData));
-    console.log(length, maxColor);
     let preValue = 0;
     const typeCharater = type == "year"? "年" : "月";
     
@@ -573,5 +568,171 @@ function draw_national_chart () {
     }
     $("#nation-chart-footer").append(htmlstr);
 
+}
+
+function get_ota_data() {
+    let disData = {};
+    console.log(reservation_data.slice(1));
+    
+    reservation_data.slice(1).forEach(item => {
+        const ota = item[0].toLowerCase(); // Assuming item[0] contains the OTA name
+        const year = item[18].split("/")[0];
+        const month = item[18].split("/")[1];
+        if(disData[ota]){
+            if(disData[ota][year]) {
+                if(disData[ota][year][month]) {
+                    disData[ota][year][month]++;
+                } else {
+                    disData[ota][year][month] = 1; // Initialize month count
+                }
+            } else {
+                disData[ota][year] = {}; // Initialize year count
+                disData[ota][year][month] = 1; // Initialize month count
+            }
+        } else {
+            disData[ota] = {}; // Initialize year and month count
+            disData[ota][year] = {};
+            disData[ota][year][month] = 1; // Initialize month count
+        }
+    });
+    otaChartData = disData;
+    
+}
+
+function draw_ota_graph(){
+    const type = $("#otaAnalysisType").val();
+    // const type = "month";
+    const year = $("#otaSelYear").val();
+    // const year = 2023;
+    console.log(otaChartData);
+    let preData = {};
+    let chartData = [];
+    if(type == "year"){
+        for(const key in otaChartData){
+            let count = 0;
+            for(const year in otaChartData[key]) {
+                for(const month in otaChartData[key][year]){
+                    count += otaChartData[key][year][month];
+                }
+                if(preData[year]){
+                    preData[year][key] = count;
+                } else{
+                    preData[year] = {};
+                    preData[year][key] = count;
+                }
+            }
+        }
+        console.log(preData);
+    
+        for(const year in preData){
+            chartData.push({"period": year,
+                "airbnb": preData[year]["airbnb"] || 0,
+                "booking.com": preData[year]["booking.com"] || 0,
+                "total": (preData[year]["airbnb"]||0) + (preData[year]["booking.com"]||0)});
+        }
+        console.log(chartData);
+    } else {
+        for(const key in otaChartData){
+            if(otaChartData[key][year]){
+                for(const month in otaChartData[key][year]){
+                    if(preData[month]){
+                        preData[month][key] = otaChartData[key][year][month];
+                    } else {
+                        preData[month] = {};
+                        preData[month][key] = otaChartData[key][year][month];
+                    }
+                }
+            }
+        }
+        console.log(preData);
+    
+        for(const month in preData){
+            chartData.push({"period": month,
+                "airbnb": preData[month]["airbnb"] || 0,
+                "booking.com": preData[month]["booking.com"] || 0,
+                "total": (preData[month]["airbnb"]||0) + (preData[month]["booking.com"]||0)});
+        }
+        console.log(chartData);
+    }
+    
+    
+
+    if ($('#ota-graph').length) {
+
+        Morris.Area({
+            element : 'ota-graph',
+            data : chartData,
+            xkey : 'period',
+            ykeys : ['total', 'booking.com', 'airbnb'],
+            labels : ['Total', 'Booking.com', 'Airbnb'],
+            pointSize : 2,
+            hideHover : 'auto',
+            xLabelFormat: function (x) {
+                console.log(x);
+                if(type == "year"){
+                    let year = new Date(x).getFullYear();
+                    let month = new Date(x).getMonth() + 4; // Months are 0-indexed
+                    if (month > 12) {
+                        month = month - 12;
+                        year = year/1 + 1; // Adjust year if month exceeds December
+                    }
+    
+                    return `${year}年${month}月`; // Display only the year string
+                } else {
+                    let month = new Date(x).getFullYear()-1897;
+                    let disYear = year
+                    if(month > 12) {
+                        month = month -12;
+                        disYear = year/1 + 1;
+                    }
+                    return `${disYear}年${month}月`; // Display only the year string
+                }
+            }
+        });
+    }
+
+    $("#ota-table").empty();
+    let htmlstr = `<table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th rowspan="2" class="text-center">期間</th>
+                                <th colspan="2" class="text-center">Airbnb</th>
+                                <th colspan="2" class="text-center">Booking</th>
+                                <th colspan="2" class="text-center">合計</th>
+                            </tr>
+                            <tr>
+                                <th class="text-center">予約数</th>
+                                <th class="text-center">増加率(%)</th>
+                                <th class="text-center">予約数</th>
+                                <th class="text-center">増加率(%)</th>
+                                <th class="text-center">予約数</th>
+                                <th class="text-center">増加率(%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+    chartData.forEach((item, index) => {
+        const airbnbCount = item["airbnb"] || 0;
+        const bookingCount = item["booking.com"] || 0;
+        const totalCount = item["total"] || 0;
+
+        const airbnbRate = index? airbnbCount > 0 ? Math.round((airbnbCount - (preData[item.period/1 - 1]?.airbnb || 0)) / (airbnbCount || 1) * 100) : "-":"-";
+        const bookingRate = index? bookingCount > 0 ? Math.round((bookingCount - (preData[item.period/1 - 1]?.["booking.com"] || 0)) / (bookingCount || 1) * 100) : "-":"-";
+        const totalRate = index? totalCount > 0 ? Math.round((totalCount - ((preData[item.period/1 - 1]?.airbnb || 0) + (preData[item.period/1 - 1]?.["booking.com"] || 0))) / (totalCount || 1) * 100) : "-":"-";
+
+        htmlstr += `<tr>
+                        <td>${type == "year"? item.period: item.period/1 > 9 ? item.period/1 - 9: item.period/1 + 3 }${type == "year"? "年":"月"}</td>
+                        <td>${airbnbCount}</td>
+                        <td>${airbnbRate}</td>
+                        <td>${bookingCount}</td>
+                        <td>${bookingRate}</td>
+                        <td>${totalCount}</td>
+                        <td>${totalRate}</td>
+                    </tr>`;
+    });
+
+    htmlstr += `</tbody>
+                    </table>`;
+    $("#ota-table").append(htmlstr);
+    
     
 }

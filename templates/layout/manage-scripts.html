@@ -253,7 +253,6 @@
 				contentType: false,
 				processData: false,
 				success: function (res) {
-					console.log(res);
 					
 					switch (res.code){
 						case '100': localStorage.setItem("me", JSON.stringify(res.data)); location.href = '/'; break;
@@ -422,7 +421,6 @@
 		});
 		$("#datafile").change(function () {
 			var fileName = $(this).val().split("\\").pop();
-			console.log(fileName);
 			$("#fileaddbtn").text("データフ追加(" + fileName + ")");
 			$("#fileaddbtn").attr("type", "submit");
 		});
@@ -445,7 +443,6 @@
 						localStorage.removeItem('reservationData');
 						localStorage.setItem('reservationData', JSON.stringify(response.data));
 						reservation_data = response.data;
-						console.log(reservation_data);
 						
 						activePage = 1;
 						pageSize = 10;
@@ -477,11 +474,9 @@
 			if (!$(this).hasClass('disabled')){
 				if($(this).hasClass('next')){
 					activePage += 1;
-					console.log("next");
 					
 				} else if($(this).hasClass('previous')){
 					activePage -= 1;
-					console.log("prev");
 					
 				} 
 				else{

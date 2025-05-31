@@ -17,7 +17,6 @@ function draw_reservationTable(){
         });
         htmlstr += "</tr></thead>";
         const tableData = reservation_data.slice(1).slice(startIndex, endIndex);
-        console.log(tableData);
         htmlstr += "<tbody>";
         tableData.forEach((item, index) => {
             htmlstr += "<tr>\
@@ -59,8 +58,6 @@ function draw_reservationTable(){
 }
 
 function draw_pagination(){
-    console.log("pageCount", pageCount);
-    console.log("activePage", activePage);
     
     const pagination = $("#dt_basic_paginate");
     pagination.empty();
@@ -104,7 +101,6 @@ function draw_pagination(){
             htmlstr += `<li class="paginate_button" aria-controls="dt_basic" tabindex="0" data-index="1"><span>1</span></li>`;
             htmlstr += `<li class="paginate_button disabled"><span>...</span></li>`;
             for (let i = activePage - 2; i <= activePage/1 + 2; i++) {
-                console.log(i);
                 
                 if (i == activePage) {
                     htmlstr += `<li class="paginate_button active" aria-controls="dt_basic" tabindex="0" data-index="${i}"><span>${i}</span></li>`;

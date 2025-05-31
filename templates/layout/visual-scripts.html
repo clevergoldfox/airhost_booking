@@ -58,7 +58,6 @@
 		});
 		$("#datafile").change(function () {
 			var fileName = $(this).val().split("\\").pop();
-			console.log(fileName);
 			$("#fileaddbtn").text("データフ追加(" + fileName + ")");
 			$("#fileaddbtn").attr("type", "submit");
 		});
@@ -110,11 +109,9 @@
 			if (!$(this).hasClass('disabled')){
 				if($(this).hasClass('next')){
 					selSheet += 1;
-					console.log("next");
 					
 				} else if($(this).hasClass('previous')){
 					selSheet -= 1;
-					console.log("prev");
 					
 				} 
 				else{
@@ -143,6 +140,10 @@
 
         //================= draw reservation calendar ============//
         draw_reservation_calendar();
+
+		$("body").on("click", ".ope-td", function () {
+			$("#myModal").modal("show");
+		});
 		
         //================= draw nationality configuration ============//
 		nationality_chart();
@@ -155,8 +156,23 @@
 				$("#selYearDiv").addClass("d-none");
 			}
 		});
-
+		
 		draw_national_chart();
+		
+		get_ota_data();
+		
+		$(document).on('change', '#otaAnalysisType', function () {
+			const selectedValue = $(this).val();
+			if(selectedValue == "month") {
+				$("#otaSelYearDiv").removeClass("d-none");
+			} else {
+				$("#otaSelYearDiv").addClass("d-none");
+			}
+		});
+
+		draw_ota_graph();
+		
+		
 	});
 
 </script>

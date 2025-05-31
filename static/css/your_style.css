@@ -189,3 +189,13 @@ td {
 .text-white {
     color: white;
 }
+
+.ope-td {
+    cursor: pointer;
+    background-color: #7e9d3a;
+}
+
+.ope-td:hover {
+    background-color: #cceb84;
+    scale: 1.05;
+}
