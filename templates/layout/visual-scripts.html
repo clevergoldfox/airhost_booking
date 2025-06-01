@@ -142,7 +142,8 @@
         draw_reservation_calendar();
 
 		$("body").on("click", ".ope-td", function () {
-			$("#myModal").modal("show");
+			const id = $(this).attr("data-index");
+			show_calender_modal(id/1);
 		});
 		
         //================= draw nationality configuration ============//

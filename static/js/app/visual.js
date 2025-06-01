@@ -733,6 +733,19 @@ function draw_ota_graph(){
     htmlstr += `</tbody>
                     </table>`;
     $("#ota-table").append(htmlstr);
-    
+}
+
+function show_calender_modal(id){
+    console.log(reservation_data.slice(1)[id]);
+    $("#calendarModal-body").empty(); // Clear previous content in the modal body
+    const reservation = reservation_data.slice(1)[id];
+    var htmlstr = "";
+    htmlstr += `<h1>${reservation[8]}</h1>`;
+    reservation_data[0].forEach((item, index) => {
+        htmlstr += `<p>${item}: ${reservation[index]}</p>`;
+    });
+    $("#calendarModal-body").append(htmlstr);
+    $("#calendarModal").modal("show");
+
     
 }
