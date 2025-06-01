@@ -1,0 +1,509 @@
+<script src="{{ url_for('static', filename='js/app/users.js')}}"></script>
+<script src="{{ url_for('static', filename='js/app/reservation.js')}}"></script>
+
+<script type="text/javascript">
+
+	$(document).ready(function () {
+
+		/* chart colors default */
+		var $chrt_border_color = "#efefef";
+		var $chrt_grid_color = "#DDD"
+		var $chrt_main = "#E24913";
+		/* red       */
+		var $chrt_second = "#6595b4";
+		/* blue      */
+		var $chrt_third = "#FF9F01";
+		/* orange    */
+		var $chrt_fourth = "#7e9d3a";
+		/* green     */
+		var $chrt_fifth = "#BD362F";
+		/* dark red  */
+		var $chrt_mono = "#000";
+
+		pageSetUp();
+
+		/* bar chart */
+
+		if ($("#opedate-chart-1").length) {
+
+		var data1 = [];
+		for (var i = 1; i <= 14; i += 1)
+			data1.push([i, parseInt(Math.random() * 100)]);
+
+		var data2 = [];
+		for (var i = 1; i <= 14; i += 1)
+			data2.push([i, parseInt(Math.random() * 30)]);
+
+		var data3 = [];
+		for (var i = 1; i <= 14; i += 1)
+			data3.push([i, parseInt(Math.random() * 30)]);
+
+		var ds = new Array();
+
+		ds.push({
+			data : data1,
+			bars : {
+				show : true,
+				barWidth : 0.2,
+				order : 1,
+			}
+		});
+		ds.push({
+			data : data2,
+			bars : {
+				show : true,
+				barWidth : 0.2,
+				order : 2
+			}
+		});
+		ds.push({
+			data : data3,
+			bars : {
+				show : true,
+				barWidth : 0.2,
+				order : 3
+			}
+		});
+
+		//Display graph
+		$.plot($("#opedate-chart-1"), ds, {
+			colors : [$chrt_second, $chrt_fourth, "#666", "#BBB"],
+			grid : {
+				show : true,
+				hoverable : true,
+				clickable : true,
+				tickColor : $chrt_border_color,
+				borderWidth : 0,
+				borderColor : $chrt_border_color,
+			},
+			legend : true,
+			tooltip : true,
+			tooltipOpts : {
+				content : "<b>%x</b> = <span>%y</span>",
+				defaultTheme : false
+			}
+
+		});
+
+		}
+		if ($("#opedate-chart-2").length) {
+
+		var data1 = [];
+		for (var i = 0; i <= 14; i += 1)
+			data1.push([i, parseInt(Math.random() * 100)]);
+
+		var data2 = [];
+		for (var i = 0; i <= 14; i += 1)
+			data2.push([i, parseInt(Math.random() * 30)]);
+
+		var data3 = [];
+		for (var i = 0; i <= 14; i += 1)
+			data3.push([i, parseInt(Math.random() * 30)]);
+
+		var ds = new Array();
+
+		ds.push({
+			data : data1,
+			bars : {
+				show : true,
+				barWidth : 0.2,
+				order : 1,
+			}
+		});
+		ds.push({
+			data : data2,
+			bars : {
+				show : true,
+				barWidth : 0.2,
+				order : 2
+			}
+		});
+		ds.push({
+			data : data3,
+			bars : {
+				show : true,
+				barWidth : 0.2,
+				order : 3
+			}
+		});
+
+		//Display graph
+		$.plot($("#opedate-chart-2"), ds, {
+			colors : [$chrt_second, $chrt_fourth, "#666", "#BBB"],
+			grid : {
+				show : true,
+				hoverable : true,
+				clickable : true,
+				tickColor : $chrt_border_color,
+				borderWidth : 0,
+				borderColor : $chrt_border_color,
+			},
+			legend : true,
+			tooltip : true,
+			tooltipOpts : {
+				content : "<b>%x</b> = <span>%y</span>",
+				defaultTheme : false
+			}
+
+		});
+
+		}
+
+		/* end bar chart */
+
+		var me = null;
+		if(localStorage.getItem("me")){
+			const medata = JSON.parse(localStorage.getItem("me"));
+			me = {
+				"id": medata[0],
+				"firstname": medata[1],
+				"lastname": medata[2],
+				"gender": medata[3],
+				"birth": medata[4],
+				"email": medata[5],
+				"role": medata[6],
+				"avatar": medata[8]
+			};
+		}
+		console.log(me);
+
+		//================== start top bar ===============//
+		if(me){
+			if (me.avatar) {
+				$("#top-avatar").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}".replace("default.png", me.avatar));
+			} else {
+				$("#top-avatar").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}");
+			}
+			$("#top-name").text(me.firstname && me.lastname ? me.firstname + " " + me.lastname + "さん" : "ユーザーさん");
+	
+			$("#profileedit").click(async function () {
+				location.href = await "/profile";
+			});
+			$("#logout").click(function () {
+				localStorage.removeItem("me");
+				location.href = "/login";
+			});
+
+			//side bar
+			if(me?.role == "admin" || me?.role == "manager"){
+				$("#usermanage-nav").removeClass("d-none");
+			} else {
+				$("#usermanage-nav").addClass("d-none");
+			}
+		} else {
+				// window.location.href = "/login";
+		}
+		//=============== end top bar ================//
+
+		//==================start signup, login ============//
+
+		//toggle password hint
+		$("form").on("click", ".passhinttoogle", function() {
+			if($(this).hasClass("fa-eye")){
+				$(this).removeClass("fa-eye").addClass("fa-eye-slash");
+				$(this).parent().find("input").attr("type", "text");
+			} else {
+				$(this).removeClass("fa-eye-slash").addClass("fa-eye");
+				$(this).parent().find("input").attr("type", "password");
+			}
+		});
+
+		//imagefile upload
+		$("#avatarimg").on("click", function () {
+			$("#avatar").click();
+		});
+
+		$("#avatar").on("change", function () {
+			var fileName = $(this).val().split("\\").pop();
+			if (fileName) {
+				$("#avatarimg").attr("src", URL.createObjectURL(this.files[0]));
+			} else {
+				$("#avatarimg").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}");
+			}
+		});
+
+		$("#signup-form").submit(function (event) {
+			event.preventDefault();
+			const form = this; // native DOM element
+			const formData = new FormData(form); // create FormData object
+			$.ajax({
+				type: "POST",
+				url: "/signup",
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (response) {
+					location.href = "/login"; // Redirect to login page on success
+				},
+				error: function (xhr, status, error) {
+					alert("申し訳ありませんが、もう一度お試しください。");
+				}
+			});
+		});
+
+		$("#login-form").submit(function (event) {
+			event.preventDefault();
+			const form = this; // native DOM element
+			const formData = new FormData(form); // create FormData object
+						
+			$.ajax({
+				type: "POST",
+				url: "/login",
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (res) {
+					
+					switch (res.code){
+						case '100': localStorage.setItem("me", JSON.stringify(res.data)); location.href = '/'; break;
+						case '102':  break;
+					}
+					// alert(res.message);
+					
+					// location.href = "/"; // Redirect to login page on success
+				},
+				error: function (xhr, status, error) {
+					alert("申し訳ありませんが、もう一度お試しください。");
+				}
+			});
+		});
+
+
+		//==================end signup, login ==============//
+
+		//=============== start data table ==============//
+		var responsiveHelper_dt_basic = undefined;
+		var responsiveHelper_datatable_fixed_column = undefined;
+		var responsiveHelper_datatable_col_reorder = undefined;
+		var responsiveHelper_datatable_tabletools = undefined;
+
+		var breakpointDefinition = {
+			tablet: 1024,
+			phone: 480
+		};
+
+		$('#dt_basic').dataTable({
+			"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-12 hidden-xs'l>r>" +
+				"t" +
+				"<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
+			"autoWidth": true,
+			"preDrawCallback": function () {
+				// Initialize the responsive datatables helper once.
+				if (!responsiveHelper_dt_basic) {
+					responsiveHelper_dt_basic = new ResponsiveDatatablesHelper($('#dt_basic'), breakpointDefinition);
+				}
+			},
+			"rowCallback": function (nRow) {
+				responsiveHelper_dt_basic.createExpandIcon(nRow);
+			},
+			"drawCallback": function (oSettings) {
+				responsiveHelper_dt_basic.respond();
+			}
+		});
+
+		/* END BASIC */
+
+		/* COLUMN FILTER  */
+		var otable = $('#datatable_fixed_column').DataTable({
+			//"bFilter": false,
+			//"bInfo": false,
+			//"bLengthChange": false
+			//"bAutoWidth": false,
+			//"bPaginate": false,
+			//"bStateSave": true // saves sort state using localStorage
+			"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6 hidden-xs'f><'col-sm-6 col-xs-12 hidden-xs'<'toolbar'>>r>" +
+				"t" +
+				"<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-xs-12 col-sm-6'p>>",
+			"autoWidth": true,
+			"preDrawCallback": function () {
+				// Initialize the responsive datatables helper once.
+				if (!responsiveHelper_datatable_fixed_column) {
+					responsiveHelper_datatable_fixed_column = new ResponsiveDatatablesHelper($('#datatable_fixed_column'), breakpointDefinition);
+				}
+			},
+			"rowCallback": function (nRow) {
+				responsiveHelper_datatable_fixed_column.createExpandIcon(nRow);
+			},
+			"drawCallback": function (oSettings) {
+				responsiveHelper_datatable_fixed_column.respond();
+			}
+
+		});
+
+		// custom toolbar
+		$("div.toolbar").html('<div class="text-right"><img src="img/logo.png" alt="SmartAdmin" style="width: 111px; margin-top: 3px; margin-right: 10px;"></div>');
+
+		// Apply the filter
+		$("#datatable_fixed_column thead th input[type=text]").on('keyup change', function () {
+
+			otable
+				.column($(this).parent().index() + ':visible')
+				.search(this.value)
+				.draw();
+
+		});
+		/* END COLUMN FILTER */
+
+		/* COLUMN SHOW - HIDE */
+		$('#datatable_col_reorder').dataTable({
+			"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-6 hidden-xs'C>r>" +
+				"t" +
+				"<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-sm-6 col-xs-12'p>>",
+			"autoWidth": true,
+			"preDrawCallback": function () {
+				// Initialize the responsive datatables helper once.
+				if (!responsiveHelper_datatable_col_reorder) {
+					responsiveHelper_datatable_col_reorder = new ResponsiveDatatablesHelper($('#datatable_col_reorder'), breakpointDefinition);
+				}
+			},
+			"rowCallback": function (nRow) {
+				responsiveHelper_datatable_col_reorder.createExpandIcon(nRow);
+			},
+			"drawCallback": function (oSettings) {
+				responsiveHelper_datatable_col_reorder.respond();
+			}
+		});
+
+		/* END COLUMN SHOW - HIDE */
+
+		/* TABLETOOLS */
+		$('#datatable_tabletools').dataTable({
+
+			// Tabletools options: 
+			//   https://datatables.net/extensions/tabletools/button_options
+			"sDom": "<'dt-toolbar'<'col-xs-12 col-sm-6'f><'col-sm-6 col-xs-6 hidden-xs'T>r>" +
+				"t" +
+				"<'dt-toolbar-footer'<'col-sm-6 col-xs-12 hidden-xs'i><'col-sm-6 col-xs-12'p>>",
+			"oTableTools": {
+				"aButtons": [
+					"copy",
+					"csv",
+					"xls",
+					{
+						"sExtends": "pdf",
+						"sTitle": "SmartAdmin_PDF",
+						"sPdfMessage": "SmartAdmin PDF Export",
+						"sPdfSize": "letter"
+					},
+					{
+						"sExtends": "print",
+						"sMessage": "Generated by SmartAdmin <i>(press Esc to close)</i>"
+					}
+				],
+				"sSwfPath": "js/plugin/datatables/swf/copy_csv_xls_pdf.swf"
+			},
+			"autoWidth": true,
+			"preDrawCallback": function () {
+				// Initialize the responsive datatables helper once.
+				if (!responsiveHelper_datatable_tabletools) {
+					responsiveHelper_datatable_tabletools = new ResponsiveDatatablesHelper($('#datatable_tabletools'), breakpointDefinition);
+				}
+			},
+			"rowCallback": function (nRow) {
+				responsiveHelper_datatable_tabletools.createExpandIcon(nRow);
+			},
+			"drawCallback": function (oSettings) {
+				responsiveHelper_datatable_tabletools.respond();
+			}
+		});
+
+		/* END TABLETOOLS */
+		//=============== end data table ==============//
+		
+		//=============== start reservation data  ==============//
+		// reservation data adding 
+		draw_reservationTable();
+		draw_pagination();
+		$("#fileaddbtn").click(function () {
+			if($(this).attr("type")=="button"){
+				$("#datafile").click();
+			}
+		});
+		$("#datafile").change(function () {
+			var fileName = $(this).val().split("\\").pop();
+			$("#fileaddbtn").text("データフ追加(" + fileName + ")");
+			$("#fileaddbtn").attr("type", "submit");
+		});
+
+		$("#datafile-form").submit(function (event) {
+			event.preventDefault();
+			var formData = new FormData($(this)[0]);
+						
+			$.ajax({
+				type: "POST",
+				url: "/reservation",
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (response) {
+					if (response.status == "success") {
+						$("#fileaddbtn").text("データフ追加(CSVァイル)");
+						$("#datafile").val("");
+						$("#fileaddbtn").attr("type", "button");
+						localStorage.removeItem('reservationData');
+						localStorage.setItem('reservationData', JSON.stringify(response.data));
+						reservation_data = response.data;
+						
+						activePage = 1;
+						pageSize = 10;
+						pageCount = Math.ceil(reservation_data.length / pageSize);
+						draw_reservationTable();
+						draw_pagination();
+						
+					} else {
+						alert("Error: " + response.message);
+					}
+				},
+				error: function (xhr, status, error) {
+					alert("申し訳ありませんが、もう一度お試しください。");
+				}
+			});
+		});
+		
+		//change page item number 
+		$("#dt_basic_length").change(function () {
+			pageSize = $(this).find("select").val();
+			pageCount = Math.ceil(reservation_data.length / pageSize);
+			activePage = 1;
+			draw_reservationTable();
+			draw_pagination();
+		});
+
+		//change page number 
+		$("#dt_basic_paginate").on("click", ".paginate_button", function () {
+			if (!$(this).hasClass('disabled')){
+				if($(this).hasClass('next')){
+					activePage += 1;
+					
+				} else if($(this).hasClass('previous')){
+					activePage -= 1;
+					
+				} 
+				else{
+					activePage = $(this).attr("data-index");
+				}
+				draw_reservationTable();
+				draw_pagination();
+			}
+			
+		});
+		// reservation data removing 
+		$("#dataremove").click(function () {
+			if (confirm("Are you sure you want to delete all data?")) {
+				localStorage.removeItem('reservationData');
+				reservation_data = [];
+				activePage = 1;
+				pageSize = 10;
+				pageCount = 0;
+				draw_reservationTable();
+				draw_pagination();
+			}
+		});
+		//=============== end reservation data  ==============//
+	})
+
+</script>
+
+</body>
+
+</html>

@@ -182,6 +182,17 @@ def reservation():
 
 # =================== end reservation-data manage ========================
 
+# =================== start cost-data manage ========================
+
+@flask_app.route('/cost-page', methods=['GET', 'POST'])
+def cost():
+    if request.method == 'POST':
+        return render_template('cost.html')
+    if request.method == 'GET':
+        return render_template('cost.html')
+
+# =================== end cost-data manage ========================
+
 
 
 # =================== Boot server ========================

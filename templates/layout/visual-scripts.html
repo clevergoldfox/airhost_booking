@@ -45,12 +45,20 @@
 		} else {
 				// window.location.href = "/login";
 		}
+	
+		draw_operation_chart();
+		draw_opedate_pagination();
+		draw_reservation_calendar();
+		nationality_chart();
+		draw_national_chart();
+		get_ota_data();
+		draw_ota_graph();
 
 		//=============== end top bar ================//
 		
 		//=============== start visualization data  ==============//
 		// operation days data adding 
-        var operation_data = [];
+       
 		$("#fileaddbtn").click(function () {
 			if($(this).attr("type")=="button"){
 				$("#datafile").click();
@@ -78,18 +86,19 @@
 						$("#fileaddbtn").text("データフ追加(CSVァイル)");
 						$("#datafile").val("");
 						$("#fileaddbtn").attr("type", "button");
-						localStorage.removeItem('operationData');
-						localStorage.setItem('operationData', JSON.stringify(response.data));
 						const pre_data = JSON.parse(response.data);
-
+						
                         for (const key in pre_data) {
-                            sheetList.push(key);
+							sheetList.push(key);
                             operation_data.push([key, pre_data[key]]);
                         }
+						localStorage.removeItem('operationData');
+						localStorage.setItem('operationData', JSON.stringify(operation_data));
+						localStorage.removeItem('operationSheetList');
+						localStorage.setItem('operationSheetList', JSON.stringify(sheetList));
                         sheetNum = sheetList.length;
                         selSheet = 1;
-                        const disData = operation_data[selSheet-1];
-                        draw_operation_chart(disData);
+                        draw_operation_chart();
                         draw_opedate_pagination();
 						
 					} else {
@@ -127,19 +136,19 @@
 		// operation days data removing 
 		$("#dataremove").click(function () {
 			if (confirm("Are you sure you want to delete all data?")) {
-				localStorage.removeItem('reservationData');
-				reservation_data = [];
+				localStorage.removeItem('operationData');
+				localStorage.removeItem('operationSheetList');
+				operation_data = [];
 				activePage = 1;
 				pageSize = 10;
 				pageCount = 0;
-				draw_reservationTable();
-				draw_pagination();
+				draw_operation_chart();
+				draw_opedate_pagination();
 			}
 		});
 		//=============== end reservation data  ==============//
 
         //================= draw reservation calendar ============//
-        draw_reservation_calendar();
 
 		$("body").on("click", ".ope-td", function () {
 			const id = $(this).attr("data-index");
@@ -147,7 +156,6 @@
 		});
 		
         //================= draw nationality configuration ============//
-		nationality_chart();
 
 		$(document).on('change', '#analysisType', function () {
 			const selectedValue = $(this).val();
@@ -157,10 +165,7 @@
 				$("#selYearDiv").addClass("d-none");
 			}
 		});
-		
-		draw_national_chart();
-		
-		get_ota_data();
+	
 		
 		$(document).on('change', '#otaAnalysisType', function () {
 			const selectedValue = $(this).val();
@@ -170,8 +175,6 @@
 				$("#otaSelYearDiv").addClass("d-none");
 			}
 		});
-
-		draw_ota_graph();
 		
 		
 	});
