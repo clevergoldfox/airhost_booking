@@ -1,28 +1,17 @@
-from dotenv import load_dotenv
-import os
+import mysql.connector
 
-# Load .env variables
-load_dotenv()
+conn = mysql.connector.connect(
+    host='localhost',
+    user='root',
+    password='',
+    database='airhost_db'
+)
 
-# Get the path from the environment and set it for Google credentials
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-
-# Now you can safely use BigQuery
-from google.cloud import bigquery
-client = bigquery.Client()
+cursor = conn.cursor()
 
 def create_user(firstname, lastname, gender, birth, email, role, password, original, avatar):
     # Insert query
-    sql = """
-        DECLARE next_id INT64;
-
-        SET next_id = (
-        SELECT IFNULL(MAX(id), 0) + 1
-        FROM `airhostbooking-461314.airhost.users`
-        );
-        INSERT INTO 'airhostbooking-461314.airhost.users' (id, firstname, lastname, gender, birth, email, role, password, original, avatar) 
-        VALUES (next_id, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
+    sql = "INSERT INTO users (firstname, lastname, gender, birth, email, role, password, original, avatar) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
     values = (firstname, lastname, gender, birth, email, role, password, original, avatar)
 
     cursor.execute(sql, values)

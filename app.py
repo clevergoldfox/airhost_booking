@@ -14,6 +14,7 @@ import re
 import json
 
 from controllers.users import create_user, get_users, edit_user, del_user, login_user 
+from controllers.costs import create_cost, get_costs
 
 # -------------------------------
 # Flask Application Definition
@@ -184,13 +185,75 @@ def reservation():
 
 # =================== start cost-data manage ========================
 
-@flask_app.route('/cost-page', methods=['GET', 'POST'])
+@flask_app.route('/cost', methods=['GET', 'POST'])
 def cost():
     if request.method == 'POST':
-        return render_template('cost.html')
+        try:
+            # print("request data", request)
+            data = request.form.to_dict()  # Convert form data to a dictionary
+            # print("data", request.to_dict())
+            print(data)
+            # # print("josn  request data", data)
+            # print("Headers:", request.headers)
+            # print("Content-Type:", request.content_type)
+            # print("Form data:", request.form["NC1001"])
+            # print("Raw data:", request.data)
+
+            return jsonify({'status': 'success', 'data': json.dumps(data, ensure_ascii=False, default=str)})
+        except Exception as e:
+            print(str(e))
+            return jsonify({'status': 'error', 'message': str(e)})
     if request.method == 'GET':
         return render_template('cost.html')
 
+@flask_app.route('/newcost', methods=['GET', 'POST'])
+def newcost():
+    if request.method == 'POST':
+        try:
+            # print("request data", request)
+            data = request.form
+            # print("josn  request data", data)
+            print("Headers:", request.headers)
+            print("Content-Type:", request.content_type)
+            print("Form data:", request.form.to_dict())
+            print("Raw data:", request.data)
+
+            return jsonify({'status': 'success', 'data': json.dumps(data, ensure_ascii=False, default=str)})
+        except Exception as e:
+            print(str(e))
+            return jsonify({'status': 'error', 'message': str(e)})
+            # return render_template('cost.html')
+    if request.method == 'GET':
+        return render_template('cost.html')
+
+@flask_app.route('/cost-file', methods=['GET', 'POST'])
+def cost_file():
+    if request.method == 'POST':
+        try:
+            file = request.files['datafile']
+            file_content = pd.read_excel(file, sheet_name=None)  # Read all sheets
+            cost_data = {}
+
+            for sheet_name, df in file_content.items():
+                if not df.empty and "価格" in sheet_name:
+                    df = df.where(pd.notnull(df), None)
+                    header = df.columns.tolist()
+                    rows = df.values.tolist()[:25]
+                    cost_data[sheet_name] = [header] + rows
+                    # exclude_indices = {17, 18, 19, 20}
+                    # ope_data[sheet_name] = [item for idx, item in enumerate(df[existing_cols].values.tolist()[:27]) if idx not in exclude_indices]
+                    # cost_data[sheet_name] = df.values.tolist()[:25]
+            # for key, value in cost_data.items():
+            #     print(f"{key}")
+
+            print(cost_data)
+
+            # return jsonify({'status': 'success', 'data': json.dumps({"価格20241119(Mth40%)":cost_data["価格20241119(Mth40%)"]}, ensure_ascii=False)})
+            return jsonify({'status': 'success', 'data': json.dumps(cost_data[next(iter(cost_data))], ensure_ascii=False, default=str)})
+        except Exception as e:
+            return jsonify({'status': 'error', 'message': str(e)})
+
+    return render_template('cost.html')
 # =================== end cost-data manage ========================
 
 

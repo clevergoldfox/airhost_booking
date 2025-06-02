@@ -1,27 +1,30 @@
-var reservation_data = JSON.parse(localStorage.getItem('reservationData'))||[];
-var activePage = 1;
-var pageSize = 10;
-var pageCount = Math.ceil(reservation_data.length / pageSize);
-function draw_reservationTable(){
-    const reservation_table = $("#dt_basic");
-    reservation_table.empty();
+var cost_pre_data = JSON.parse(localStorage.getItem('costData'))||[];
+var cost_data = JSON.parse(cost_pre_data.replace(/\bNaN\b/g, 'null'));
+console.log(cost_data);
+
+
+function draw_costTable(){
+    const cost_table = $("#dt_basic");
+    cost_table.empty();
     var htmlstr = "";
-    if (reservation_data && reservation_data.length > 0) {
+    if (cost_data && cost_data.length > 0) {
+        const headData = cost_data[0];
         
-        const startIndex = (activePage - 1) * pageSize;
-        const endIndex = startIndex + pageSize/1;
-        const headData = reservation_data[0];
-        var htmlstr = "<thead><tr><th>No</th>";
-        headData.forEach((value, i) => {
-            htmlstr += "<th data-hide='phone'>" + value + "</th>";
+        var htmlstr = "<thead><tr>";
+        headData.slice(1).forEach((value, i) => {
+            if(value.indexOf("Unnamed")>=0){
+                value = " "
+            }
+            htmlstr += "<th data-hide='phone'>" + value.replace(".1", "") + "</th>";
         });
         htmlstr += "</tr></thead>";
-        const tableData = reservation_data.slice(1).slice(startIndex, endIndex);
-        htmlstr += "<tbody>";
+        const tableData = cost_data.slice(1);
+        
+        htmlstr += "<tbody id='cost_data'>";
         tableData.forEach((item, index) => {
-            htmlstr += "<tr>\
-            <td>" + (startIndex+ index + 1) + "</td>";
-            item.forEach((value, i) => {
+            htmlstr += "<tr>";
+            item.slice(1).forEach((value, i) => {
+                value = value? value: "-";
                 htmlstr += "<td>" + value + "</td>"
             });
             htmlstr += "</tr>";
@@ -47,76 +50,72 @@ function draw_reservationTable(){
                             Date</th> -->
                     </tr>
                 </thead>
-                <tbody id="reservation_data">
+                <tbody id="cost_data">
                     <tr >
                         <td> </td>
                     </tr>
                     <!-- Add more rows with similar structure as needed -->
                 </tbody>`
     }
-    reservation_table.append(htmlstr);
+    cost_table.append(htmlstr);
+    $(".dt-toolbar").empty();
+    $(".dt-toolbar").append(`<button onclick="add_modal_show()" class="btn btn-success btn-labeled" href="javascript:void(0);" style="padding-left: 12px!important; padding-right: 12px!important; float:right;"> <span class="btn-label"><i class="fa fa-plus-circle"></i></span>追加</button>`);
+    $(".dt-toolbar-footer").remove();
 }
 
-function draw_pagination(){
+function add_modal_show() {
+    let pre_cost = {};
+    cost_data.slice(1).forEach((item, index) => {
+        for (let i = item.length - 5; i >= 0; i--) {
+            if (item[i] !== null) {
+                pre_cost[item[1]] = item[i];
+                break;
+            }
+        }
+    });
+    console.log(pre_cost);
     
-    const pagination = $("#dt_basic_paginate");
-    pagination.empty();
-    var htmlstr = "";
-    htmlstr += "<ul class='pagination pagination-sm'>";
-    if (activePage == 1) {
-        htmlstr += `<li class="paginate_button previous disabled" aria-controls="dt_basic" tabindex="0" id="dt_basic_previous"><span>Previous</span></li>`;
-    } else {
-        htmlstr += `<li class="paginate_button previous" aria-controls="dt_basic" tabindex="0" id="dt_basic_previous"><span>Previous</span></li>`;
+    let htmlstr = "";
+    htmlstr += `<fieldset>
+    <legend>
+    客室価格変更  ${getFormattedNow()}
+    </legend>`;
+    for(key in pre_cost){
+        htmlstr += `<div class="form-group">
+        <label class="col-xs-2 col-lg-3 control-label">${key}</label>
+        <div class="col-xs-9 col-lg-6 inputGroupContainer">
+        <div class="input-group">
+        <input type="number" class="form-control" name="${key.replace(/[\u3040-\u30FF\u4E00-\u9FFF()（）]/g, '')}" value="${pre_cost[key]}" required/>
+        <span class="input-group-addon">¥</span>
+        </div>
+        </div>
+        </div>`;
     }
-    if (pageCount <= 6) {
-        for (let i = 1; i <= pageCount; i++) {
-            if (i == activePage) {
-                htmlstr += `<li class="paginate_button active" aria-controls="dt_basic" tabindex="0" data-index="${i}"><span>${i}</span></li>`;
-            } else {
-                htmlstr += `<li class="paginate_button" aria-controls="dt_basic" tabindex="0" data-index="${i}"><span>${i}</span></li>`;
-            }
-        }
-    }else{
-        if (activePage <= 3) {
-            for (let i = 1; i <= 5; i++) {
-                if (i == activePage) {
-                    htmlstr += `<li class="paginate_button active" aria-controls="dt_basic" tabindex="0" data-index="${i}"><span>${i}</span></li>`;
-                } else {
-                    htmlstr += `<li class="paginate_button" aria-controls="dt_basic" tabindex="0" data-index="${i}"><span>${i}</span></li>`;
-                }
-            }
-            htmlstr += `<li class="paginate_button disabled"><span>...</span></li>`;
-            htmlstr += `<li class="paginate_button" aria-controls="dt_basic" tabindex="0" data-index="${pageCount}"><span>${pageCount}</span></li>`;
-        } else if (activePage >= pageCount - 2) {
-            htmlstr += `<li class="paginate_button" aria-controls="dt_basic" tabindex="0" data-index="1"><span>1</span></li>`;
-            htmlstr += `<li class="paginate_button disabled"><span>...</span></li>`;
-            for (let i = pageCount - 4; i <= pageCount; i++) {
-                if (i == activePage) {
-                    htmlstr += `<li class="paginate_button active" aria-controls="dt_basic" tabindex="0" data-index="${i}"><span>${i}</span></li>`;
-                } else {
-                    htmlstr += `<li class="paginate_button" aria-controls="dt_basic" tabindex="0" data-index="${i}"><span>${i}</span></li>`;
-                }
-            }
-        } else {
-            htmlstr += `<li class="paginate_button" aria-controls="dt_basic" tabindex="0" data-index="1"><span>1</span></li>`;
-            htmlstr += `<li class="paginate_button disabled"><span>...</span></li>`;
-            for (let i = activePage - 2; i <= activePage/1 + 2; i++) {
-                
-                if (i == activePage) {
-                    htmlstr += `<li class="paginate_button active" aria-controls="dt_basic" tabindex="0" data-index="${i}"><span>${i}</span></li>`;
-                } else {
-                    htmlstr += `<li class="paginate_button" aria-controls="dt_basic" tabindex="0" data-index="${i}"><span>${i}</span></li>`;
-                }
-            }
-            htmlstr += `<li class="paginate_button disabled"><span>...</span></li>`;
-            htmlstr += `<li class="paginate_button" aria-controls="dt_basic" tabindex="0" data-index="${pageCount}"><span>${pageCount}</span></li>`;
-        }
-    }
-    if (activePage == pageCount) {
-        htmlstr += `<li class="paginate_button next disabled" aria-controls="dt_basic" tabindex="0" id="dt_basic_next"><span>Next</span></li>`;
-    } else {
-        htmlstr += `<li class="paginate_button next" aria-controls="dt_basic" tabindex="0" id="dt_basic_next"><span>Next</span></li>`;
-    }
-    htmlstr += "</ul>";
-    pagination.append(htmlstr);
+    htmlstr += `</fieldset>
+    <div class="form-actions">
+    <div class="row">
+    <div class="col-md-12">
+    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-reply"></i>  戻る</button>
+    <button class="btn btn-info" type="submit"><i class="fa fa-check"></i>  変更</button>
+    </div>
+    </div>
+    </div>`;
+    $("#changeCostForm").empty();
+    $("#changeCostForm").append(htmlstr);
+    $("#costRegModal").modal("show");
+}
+
+
+function getFormattedNow() {
+    const now = new Date();
+    
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+    const day = String(now.getDate()).padStart(2, '0');
+
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${year}/${month}/${day} ${hours}:${minutes}:${seconds}`;
 }

@@ -1,5 +1,5 @@
 <script src="{{ url_for('static', filename='js/app/users.js')}}"></script>
-<script src="{{ url_for('static', filename='js/app/reservation.js')}}"></script>
+<script src="{{ url_for('static', filename='js/app/cost.js')}}"></script>
 
 <script type="text/javascript">
 
@@ -412,8 +412,7 @@
 		
 		//=============== start reservation data  ==============//
 		// reservation data adding 
-		draw_reservationTable();
-		draw_pagination();
+		draw_costTable();
 		$("#fileaddbtn").click(function () {
 			if($(this).attr("type")=="button"){
 				$("#datafile").click();
@@ -431,30 +430,28 @@
 						
 			$.ajax({
 				type: "POST",
-				url: "/reservation",
+				url: "/cost-file",
 				data: formData,
 				contentType: false,
 				processData: false,
 				success: function (response) {
+                    console.log(response);
+                    
 					if (response.status == "success") {
-						$("#fileaddbtn").text("データフ追加(CSVァイル)");
+						$("#fileaddbtn").text("データフ追加(Excelァイル)");
 						$("#datafile").val("");
-						$("#fileaddbtn").attr("type", "button");
-						localStorage.removeItem('reservationData');
-						localStorage.setItem('reservationData', JSON.stringify(response.data));
-						reservation_data = response.data;
-						
-						activePage = 1;
-						pageSize = 10;
-						pageCount = Math.ceil(reservation_data.length / pageSize);
-						draw_reservationTable();
-						draw_pagination();
-						
+						$("#fileaddbtn").attr("type", "button");                        
+						localStorage.removeItem('costData');
+						localStorage.setItem('costData', JSON.stringify(response.data));
+						cost_pre_data = response.data;	
+						draw_costTable();
 					} else {
 						alert("Error: " + response.message);
 					}
 				},
 				error: function (xhr, status, error) {
+                    console.log(error);
+                    
 					alert("申し訳ありませんが、もう一度お試しください。");
 				}
 			});
@@ -500,6 +497,46 @@
 			}
 		});
 		//=============== end reservation data  ==============//
+
+		//=============== start changing cost data  ==============//
+        // $("#changeCostForm").submit(function (event) {
+        $("#changeCostForm").submit(function (event) {
+            event.preventDefault();
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+            const day = String(now.getDate()).padStart(2, '0');
+
+            const dateString = `${year}-${month}-${day}`;
+            const form = this; // native DOM element
+			const formData = new FormData(form); 
+            const newFormData = new FormData();
+            formData.forEach((value, key) => {
+                console.log(key,":", value);
+                
+                newFormData.append(key, value);
+            });
+            newFormData.append("regDate", dateString);
+            fetch('/cost', {
+                method: 'POST',
+                body: newFormData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    // localStorage.removeItem('costData');
+                    // localStorage.setItem('costData', JSON.stringify(data.data));
+                    // cost_pre_data = data.data;
+                    // draw_costTable();
+                    console.log(data);
+                    
+                    // alert("コストデータが更新されました。");
+                } else {
+                    alert("Error: " + data.message);
+                }
+            })
+        })
+		//=============== end changing cost data  ==============//
 	})
 
 </script>
