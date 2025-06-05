@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Secrec keys
+secrets/
+
+
 # Virtual environments
 venv/
 env/
