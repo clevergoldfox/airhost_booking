@@ -259,4 +259,4 @@ def cost_file():
 # =================== Boot server ========================
 
 if __name__ == "__main__":
-    flask_app.run(host="127.0.0.1", port=8000, debug=False, use_reloader=False)
+    flask_app.run(host="127.0.0.1", port=80, debug=False, use_reloader=False)
