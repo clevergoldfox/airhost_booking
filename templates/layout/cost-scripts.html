@@ -155,14 +155,14 @@
 		if(localStorage.getItem("me")){
 			const medata = JSON.parse(localStorage.getItem("me"));
 			me = {
-				"id": medata[0],
-				"firstname": medata[1],
-				"lastname": medata[2],
-				"gender": medata[3],
-				"birth": medata[4],
-				"email": medata[5],
-				"role": medata[6],
-				"avatar": medata[8]
+				"id": medata['id'],
+				"firstname": medata['firstname'],
+				"lastname": medata['lastname'],
+				"gender": medata['gender'],
+				"birth": medata['birth'],
+				"email": medata['email'],
+				"role": medata['role'],
+				"avatar": medata['avatar']
 			};
 		}
 		console.log(me);
@@ -435,7 +435,7 @@
 				contentType: false,
 				processData: false,
 				success: function (response) {
-                    console.log(response);
+                    console.log(response.data);
                     
 					if (response.status == "success") {
 						$("#fileaddbtn").text("データフ追加(Excelァイル)");
@@ -443,7 +443,8 @@
 						$("#fileaddbtn").attr("type", "button");                        
 						localStorage.removeItem('costData');
 						localStorage.setItem('costData', JSON.stringify(response.data));
-						cost_pre_data = response.data;	
+						cost_pre_data = response.data;
+						cost_data = JSON.parse(cost_pre_data.replace(/\bNaN\b/g, 'null'));	
 						draw_costTable();
 					} else {
 						alert("Error: " + response.message);
@@ -486,20 +487,16 @@
 		});
 		// reservation data removing 
 		$("#dataremove").click(function () {
-			if (confirm("Are you sure you want to delete all data?")) {
-				localStorage.removeItem('reservationData');
-				reservation_data = [];
-				activePage = 1;
-				pageSize = 10;
-				pageCount = 0;
-				draw_reservationTable();
-				draw_pagination();
+			if (confirm("本当に削除しますか？")) {
+				localStorage.removeItem('costData');
+				cost_pre_data = [];
+				cost_data = [];
+				draw_costTable();
 			}
 		});
 		//=============== end reservation data  ==============//
 
 		//=============== start changing cost data  ==============//
-        // $("#changeCostForm").submit(function (event) {
         $("#changeCostForm").submit(function (event) {
             event.preventDefault();
             const now = new Date();

@@ -9,15 +9,17 @@
 		if(localStorage.getItem("me")){
 			const medata = JSON.parse(localStorage.getItem("me"));
 			me = {
-				"id": medata[0],
-				"firstname": medata[1],
-				"lastname": medata[2],
-				"gender": medata[3],
-				"birth": medata[4],
-				"email": medata[5],
-				"role": medata[6],
-				"avatar": medata[8]
+				"id": medata['id'],
+				"firstname": medata['firstname'],
+				"lastname": medata['lastname'],
+				"gender": medata['gender'],
+				"birth": medata['birth'],
+				"email": medata['email'],
+				"role": medata['role'],
+				"avatar": medata['avatar']
 			};
+		} else{
+			location.href = "/login";
 		}
 		if (me){
 			if(me?.role == "admin" || me?.role == "manager"){
@@ -42,9 +44,7 @@
 				localStorage.removeItem("me");
 				location.href = "/login";
 			});
-		} else {
-				// window.location.href = "/login";
-		}
+		} 
 	
 		draw_operation_chart();
 		draw_opedate_pagination();
@@ -82,6 +82,8 @@
 				contentType: false,
 				processData: false,
 				success: function (response) {
+					console.log(response);
+					
 					if (response.status == "success") {
 						$("#fileaddbtn").text("データフ追加(CSVァイル)");
 						$("#datafile").val("");
@@ -135,13 +137,14 @@
 		
 		// operation days data removing 
 		$("#dataremove").click(function () {
-			if (confirm("Are you sure you want to delete all data?")) {
+			if (confirm("本当に削除しますか？")) {
 				localStorage.removeItem('operationData');
 				localStorage.removeItem('operationSheetList');
 				operation_data = [];
 				activePage = 1;
 				pageSize = 10;
 				pageCount = 0;
+				$("#opedata-chart-widget").empty();
 				draw_operation_chart();
 				draw_opedate_pagination();
 			}

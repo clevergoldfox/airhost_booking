@@ -284,16 +284,16 @@
                                         {% for item in users %}
                                             <tr>
                                                 <td>{{ loop.index }}</td>
-                                                <td><img src="{{ url_for('static', filename='img/avatars/'+ item[8])}}" style="width: 100px;"></td>
-                                                <td>{{ item[2] }}</td>
-                                                <td>{{ item[1] }}</td>
-                                                <td>{{ item[3] }}</td>
-                                                <td>{{ item[4] }}</td>
-                                                <td>{{ item[5] }}</td>
-                                                <td>{{ item[6] }}</td>
+                                                <td><img src="{{ url_for('static', filename='img/avatars/'+ item['avatar'])}}" style="width: 100px;"></td>
+                                                <td>{{ item['lastname'] }}</td>
+                                                <td>{{ item['firstname'] }}</td>
+                                                <td>{{ item['gender'] }}</td>
+                                                <td>{{ item['birth'] }}</td>
+                                                <td>{{ item['email'] }}</td>
+                                                <td>{{ item['role'] }}</td>
                                                 <td>
-                                                    <button class="btn btn-success edituserbtn" data-index="{{ item[0] }}">修正</button>
-                                                    <button class="btn btn-warning deluserbtn" data-index="{{ item[0] }}">削除</button>
+                                                    <button class="btn btn-success edituserbtn" data-index="{{ item['id'] }}">修正</button>
+                                                    <button class="btn btn-warning deluserbtn" data-index="{{ item['id'] }}">削除</button>
                                                 </td>
                                             </tr>
                                         {% endfor %}

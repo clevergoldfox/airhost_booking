@@ -64,9 +64,9 @@ function draw_pagination(){
     var htmlstr = "";
     htmlstr += "<ul class='pagination pagination-sm'>";
     if (activePage == 1) {
-        htmlstr += `<li class="paginate_button previous disabled" aria-controls="dt_basic" tabindex="0" id="dt_basic_previous"><span>Previous</span></li>`;
+        htmlstr += `<li class="paginate_button previous disabled" aria-controls="dt_basic" tabindex="0" id="dt_basic_previous"><span>前のページ</span></li>`;
     } else {
-        htmlstr += `<li class="paginate_button previous" aria-controls="dt_basic" tabindex="0" id="dt_basic_previous"><span>Previous</span></li>`;
+        htmlstr += `<li class="paginate_button previous" aria-controls="dt_basic" tabindex="0" id="dt_basic_previous"><span>前のページ</span></li>`;
     }
     if (pageCount <= 6) {
         for (let i = 1; i <= pageCount; i++) {
@@ -113,9 +113,9 @@ function draw_pagination(){
         }
     }
     if (activePage == pageCount) {
-        htmlstr += `<li class="paginate_button next disabled" aria-controls="dt_basic" tabindex="0" id="dt_basic_next"><span>Next</span></li>`;
+        htmlstr += `<li class="paginate_button next disabled" aria-controls="dt_basic" tabindex="0" id="dt_basic_next"><span>次のページ</span></li>`;
     } else {
-        htmlstr += `<li class="paginate_button next" aria-controls="dt_basic" tabindex="0" id="dt_basic_next"><span>Next</span></li>`;
+        htmlstr += `<li class="paginate_button next" aria-controls="dt_basic" tabindex="0" id="dt_basic_next"><span>次のページ</span></li>`;
     }
     htmlstr += "</ul>";
     pagination.append(htmlstr);

@@ -9,6 +9,7 @@ function draw_costTable(){
     var htmlstr = "";
     if (cost_data && cost_data.length > 0) {
         const headData = cost_data[0];
+        console.log(headData);
         
         var htmlstr = "<thead><tr>";
         headData.slice(1).forEach((value, i) => {

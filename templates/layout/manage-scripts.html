@@ -154,15 +154,17 @@
 		var me = null;
 		if(localStorage.getItem("me")){
 			const medata = JSON.parse(localStorage.getItem("me"));
+			console.log(medata);
+			
 			me = {
-				"id": medata[0],
-				"firstname": medata[1],
-				"lastname": medata[2],
-				"gender": medata[3],
-				"birth": medata[4],
-				"email": medata[5],
-				"role": medata[6],
-				"avatar": medata[8]
+				"id": medata['id'],
+				"firstname": medata['firstname'],
+				"lastname": medata['lastname'],
+				"gender": medata['gender'],
+				"birth": medata['birth'],
+				"email": medata['email'],
+				"role": medata['role'],
+				"avatar": medata['avatar']
 			};
 		}
 		console.log(me);
@@ -233,9 +235,16 @@
 				contentType: false,
 				processData: false,
 				success: function (response) {
-					location.href = "/login"; // Redirect to login page on success
+					if (response.status == "success") {
+						alert("登録が完了しました。ログインしてください。");
+						location.href = "/login"; // Redirect to login page on success
+					} else {
+						alert(response.message);
+					}
 				},
 				error: function (xhr, status, error) {
+					console.log(error);
+					
 					alert("申し訳ありませんが、もう一度お試しください。");
 				}
 			});
@@ -258,7 +267,7 @@
 						case '100': localStorage.setItem("me", JSON.stringify(res.data)); location.href = '/'; break;
 						case '102':  break;
 					}
-					// alert(res.message);
+					alert(res.message);
 					
 					// location.href = "/"; // Redirect to login page on success
 				},
@@ -489,7 +498,7 @@
 		});
 		// reservation data removing 
 		$("#dataremove").click(function () {
-			if (confirm("Are you sure you want to delete all data?")) {
+			if (confirm("本当に削除しますか？")) {
 				localStorage.removeItem('reservationData');
 				reservation_data = [];
 				activePage = 1;

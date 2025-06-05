@@ -54,21 +54,24 @@ $("#users_data").on("click", ".edituserbtn", function(){
 });
 
 $("#users_data").on("click", ".deluserbtn", function() {
-    const id = $(this).attr("data-index");
-    const formData = new FormData();
-    formData.append("id", id);
-    $.ajax({
-        type: "DELETE",
-        url: "/users/"+ id,
-        success: function (response) {
-            location.href = "/users-page"; // Redirect to login page on success
-        },
-        error: function (xhr, status, error) {
-            alert("申し訳ありませんが、もう一度お試しください。");
-        }
-    });
-
-})
+    if(confirm("本当に削除しますか？")) {
+        const id = $(this).attr("data-index");
+        const formData = new FormData();
+        formData.append("id", id);
+        $.ajax({
+            type: "DELETE",
+            url: "/users/"+ id,
+            success: function (response) {
+                console.log(response);
+                
+                location.href = "/users-page"; // Redirect to login page on success
+            },
+            error: function (xhr, status, error) {
+                alert("申し訳ありませんが、もう一度お試しください。");
+            }
+        });
+    }
+});
 
 function edituserform(data) {
     edituserId = data.id;

@@ -156,9 +156,9 @@ function draw_opedate_pagination() {
         var htmlstr = "";
         htmlstr += "<ul class='pagination pagination-sm'>";
         if (selSheet == 1) {
-            htmlstr += `<li class="paginate_button previous disabled" aria-controls="dt_basic" tabindex="0" id="opedate_previous"><span>Previous</span></li>`;
+            htmlstr += `<li class="paginate_button previous disabled" aria-controls="dt_basic" tabindex="0" id="opedate_previous"><span>前のページ</span></li>`;
         } else {
-            htmlstr += `<li class="paginate_button previous" aria-controls="dt_basic" tabindex="0" id="opedate_previous"><span>Previous</span></li>`;
+            htmlstr += `<li class="paginate_button previous" aria-controls="dt_basic" tabindex="0" id="opedate_previous"><span>前のページ</span></li>`;
         }
         if (sheetNum <= 6) {
             for (let i = 1; i <= sheetNum; i++) {
@@ -205,9 +205,9 @@ function draw_opedate_pagination() {
             }
         }
         if (selSheet == sheetNum) {
-            htmlstr += `<li class="paginate_button next disabled" aria-controls="dt_basic" tabindex="0" id="dt_basic_next"><span>Next</span></li>`;
+            htmlstr += `<li class="paginate_button next disabled" aria-controls="dt_basic" tabindex="0" id="dt_basic_next"><span>次のページ</span></li>`;
         } else {
-            htmlstr += `<li class="paginate_button next" aria-controls="dt_basic" tabindex="0" id="dt_basic_next"><span>Next</span></li>`;
+            htmlstr += `<li class="paginate_button next" aria-controls="dt_basic" tabindex="0" id="dt_basic_next"><span>次のページ</span></li>`;
         }
         htmlstr += "</ul>";
         pagination.append(htmlstr);
@@ -778,9 +778,9 @@ function draw_ota_graph(){
 }
 
 function show_calender_modal(id){
-    console.log(reservation_data.slice(1)[id]);
+    console.log(reservation_data.slice(1)[id-1]);
     $("#calendarModal-body").empty(); // Clear previous content in the modal body
-    const reservation = reservation_data.slice(1)[id];
+    const reservation = reservation_data.slice(1)[id-1];
     var htmlstr = "";
     htmlstr += `<h1>${reservation[8]}</h1>`;
     reservation_data[0].forEach((item, index) => {

@@ -3,7 +3,6 @@ import threading
 import eventlet
 import eventlet.wsgi
 from flask import Flask, Response, send_from_directory, render_template, request, send_file, jsonify
-from flask_socketio import SocketIO
 import pandas as pd
 from datetime import datetime
 import time
@@ -14,7 +13,7 @@ import re
 import json
 
 from controllers.users import create_user, get_users, edit_user, del_user, login_user 
-from controllers.costs import create_cost, get_costs
+# from controllers.costs import create_cost, get_costs
 
 # -------------------------------
 # Flask Application Definition
@@ -33,13 +32,12 @@ def login():
         email = request.form['email']
         password = request.form['password']
         user = login_user(email, password)
-        print(user)
-        if user:
-            if user == 102:
-                return {'code': '102', 'message': 'Incorrect password'}
-            return {'code': '100', 'data': user, 'message': 'Login successful'}
+        if user == 102:
+            return {'code': '102', 'message': '間違ったパスワードです。正確に入力してください。'}
+        elif user == 101:
+            return {'code': '101', 'message': 'メールアドレスが存在しません。'}
         else:
-            return {'code': '101', 'message': 'Invalid email or password'}
+            return {'code': '100', 'data': user, 'message': '正確にログインしました。'}
     if request.method == 'GET':
         return render_template('login.html')
 
@@ -51,16 +49,18 @@ def login():
 @flask_app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
+        print("request data", request.form)
         firstname = request.form['firstname']
         lastname = request.form['lastname']
         gender = request.form['gender']
         birth = request.form['birth']
         email = request.form['email']
-        role = request.form['role']
-        if role:
-            role = role.lower()
-        else:
-            role = 'staff'
+        print("firstname", firstname)
+        print("lastname", lastname)
+        print("gender", gender)
+        print("birth", birth)
+        print("email", email)
+        role = 'staff'
         password = request.form['password']
         file = request.files['avatar']
         original = file.filename
@@ -74,9 +74,9 @@ def signup():
             file.save(os.path.join("static/img/avatars", avatar))
         else:
             avatar = 'default.png'
-        create_user(firstname, lastname, gender, birth, email, role, password, original, avatar)
+        result = create_user(firstname, lastname, gender, birth, email, role, password, original, avatar)
 
-        return render_template('index.html')
+        return jsonify(result)
     if request.method == 'GET':
         return render_template('signup.html')
 
@@ -135,23 +135,18 @@ def operation():
         try:
             file = request.files['datafile']
 
-            excel_data = pd.read_excel(file, sheet_name=None)  # sheet_name=None reads all sheets
-            
+            excel_data = pd.read_excel(file, sheet_name=None)
             # Columns to extract
             columns_to_extract = ['部屋番号', 'マンスリー+民泊', 'マンスリー', '民泊使用日数']
 
             ope_data = {}
-
             for sheet_name, df in excel_data.items():
                 existing_cols = [col for col in columns_to_extract if col in df.columns]
                 if existing_cols:
                     df = df.where(pd.notnull(df), None)
                     exclude_indices = {17, 18, 19, 20}
                     ope_data[sheet_name] = [item for idx, item in enumerate(df[existing_cols].values.tolist()[:27]) if idx not in exclude_indices]
-                    # nc_data = df[existing_cols].values.tolist()[0:17]
-                    # across_data = df[existing_cols].values.tolist()[21:27]
-                    # ope_data[sheet_name] = nc_data
-                    # ope_data[sheet_name].append(across_data)
+            print("ope_data")
 
             return jsonify({'status': 'success', 'data': json.dumps(ope_data, ensure_ascii=False)})
         except Exception as e:
@@ -230,6 +225,14 @@ def newcost():
 def cost_file():
     if request.method == 'POST':
         try:
+            # file = request.files['datafile']
+            # df = pd.read_excel(file, sheet_name="価格20250218")  # Read all sheets
+            # data = df.to_dict(orient='records')
+            # for item in data:
+            #     print(item)
+            # print(data)
+            # return jsonify({'status': 'success', 'data': "data"})
+
             file = request.files['datafile']
             file_content = pd.read_excel(file, sheet_name=None)  # Read all sheets
             cost_data = {}
@@ -240,16 +243,11 @@ def cost_file():
                     header = df.columns.tolist()
                     rows = df.values.tolist()[:25]
                     cost_data[sheet_name] = [header] + rows
-                    # exclude_indices = {17, 18, 19, 20}
-                    # ope_data[sheet_name] = [item for idx, item in enumerate(df[existing_cols].values.tolist()[:27]) if idx not in exclude_indices]
-                    # cost_data[sheet_name] = df.values.tolist()[:25]
             # for key, value in cost_data.items():
             #     print(f"{key}")
-
             print(cost_data)
-
-            # return jsonify({'status': 'success', 'data': json.dumps({"価格20241119(Mth40%)":cost_data["価格20241119(Mth40%)"]}, ensure_ascii=False)})
             return jsonify({'status': 'success', 'data': json.dumps(cost_data[next(iter(cost_data))], ensure_ascii=False, default=str)})
+
         except Exception as e:
             return jsonify({'status': 'error', 'message': str(e)})
 
@@ -261,4 +259,4 @@ def cost_file():
 # =================== Boot server ========================
 
 if __name__ == "__main__":
-    flask_app.run(host="127.0.0.1", port=7000, debug=False, use_reloader=False)
+    flask_app.run(host="127.0.0.1", port=8000, debug=False, use_reloader=False)
