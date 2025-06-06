@@ -23,9 +23,17 @@
 		}
 		if (me){
 			if(me?.role == "admin" || me?.role == "manager"){
-				$("#usermanage-nav").removeClass("d-none");
+				if(me?.role == "admin"){
+					$("#usermanage-nav").removeClass("d-none");
+				}else {
+					$("#usermanage-nav").addClass("d-none");
+				}
+				$("#costmanage-nav").removeClass("d-none");
+				$("#apidata-form").removeClass("d-none");
 			} else {
 				$("#usermanage-nav").addClass("d-none");
+				$("#costmanage-nav").addClass("d-none");
+				$("#apidata-form").addClass("d-none");
 			}
 			
 			//================== start top bar ===============//
@@ -73,23 +81,26 @@
 
 		$("#datafile-form").submit(function (event) {
 			event.preventDefault();
+			$("#fileaddbtn").prop('disabled', true);
+			$("#fileaddbtn").text("ファイルをロードしています。");
 			var formData = new FormData($(this)[0]);
-						
+			
 			$.ajax({
 				type: "POST",
 				url: "/operation",
 				data: formData,
 				contentType: false,
 				processData: false,
-				success: function (response) {
+				success: async function (response) {
 					console.log(response);
 					
 					if (response.status == "success") {
-						$("#fileaddbtn").text("データフ追加(CSVァイル)");
+						$("#fileaddbtn").prop('disabled', false);
+						$("#fileaddbtn").text("データフ追加(CSVファイル)");
 						$("#datafile").val("");
 						$("#fileaddbtn").attr("type", "button");
 						const pre_data = JSON.parse(response.data);
-						
+						operation_data = [];
                         for (const key in pre_data) {
 							sheetList.push(key);
                             operation_data.push([key, pre_data[key]]);

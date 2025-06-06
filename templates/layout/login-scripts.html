@@ -1,0 +1,95 @@
+<script type="text/javascript">
+
+	$(document).ready(function () {
+
+		pageSetUp();
+
+		//==================start signup, login ============//
+
+		//toggle password hint
+		$("form").on("click", ".passhinttoogle", function() {
+			if($(this).hasClass("fa-eye")){
+				$(this).removeClass("fa-eye").addClass("fa-eye-slash");
+				$(this).parent().find("input").attr("type", "text");
+			} else {
+				$(this).removeClass("fa-eye-slash").addClass("fa-eye");
+				$(this).parent().find("input").attr("type", "password");
+			}
+		});
+
+		//imagefile upload
+		$("#avatarimg").on("click", function () {
+			$("#avatar").click();
+		});
+
+		$("#avatar").on("change", function () {
+			var fileName = $(this).val().split("\\").pop();
+			if (fileName) {
+				$("#avatarimg").attr("src", URL.createObjectURL(this.files[0]));
+			} else {
+				$("#avatarimg").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}");
+			}
+		});
+
+		$("#signup-form").submit(function (event) {
+			event.preventDefault();
+			const form = this; // native DOM element
+			const formData = new FormData(form); // create FormData object
+			$.ajax({
+				type: "POST",
+				url: "/signup",
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (response) {
+					if (response.status == "success") {
+						alert("登録が完了しました。ログインしてください。");
+						location.href = "/login"; // Redirect to login page on success
+					} else {
+						alert(response.message);
+					}
+				},
+				error: function (xhr, status, error) {
+					console.log(error);
+					
+					alert("申し訳ありませんが、もう一度お試しください。");
+				}
+			});
+		});
+
+		$("#login-form").submit(function (event) {
+			event.preventDefault();
+			const form = this; // native DOM element
+			const formData = new FormData(form); // create FormData object
+						
+			$.ajax({
+				type: "POST",
+				url: "/login",
+				data: formData,
+				contentType: false,
+				processData: false,
+				success: function (res) {
+					
+					switch (res.code){
+						case '100': localStorage.setItem("me", JSON.stringify(res.data)); location.href = '/'; break;
+						case '102':  break;
+					}
+					alert(res.message);
+					
+					// location.href = "/"; // Redirect to login page on success
+				},
+				error: function (xhr, status, error) {
+					alert("申し訳ありませんが、もう一度お試しください。");
+				}
+			});
+		});
+
+		//==================end signup, login ==============//
+
+	})
+
+</script>
+
+</body>
+
+</html>

@@ -30,7 +30,7 @@ function getInitialCalYearString() {
     const today = new Date();
     const currentYear = today.getFullYear();
     const aprilFirst = new Date(currentYear, 3, 1); // Month is 0-indexed: 3 = April
-
+    
     if (today < aprilFirst) {
         return String(currentYear - 1);  // Before April 1 => previous year
     } else {
@@ -39,6 +39,7 @@ function getInitialCalYearString() {
 }
 
 async function draw_operation_chart(){
+    operation_data = JSON.parse(localStorage.getItem('operationData'))||[];
     console.log(operation_data);
     
     if(operation_data.length == 0 || !operation_data[0].length){

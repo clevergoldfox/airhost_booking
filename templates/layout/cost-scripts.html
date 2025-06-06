@@ -164,11 +164,28 @@
 				"role": medata['role'],
 				"avatar": medata['avatar']
 			};
+		}else {
+			location.href = "/login";
 		}
-		console.log(me);
 
 		//================== start top bar ===============//
-		if(me){
+		if (me){
+			if(me?.role == "admin" || me?.role == "manager"){
+				if(me?.role == "admin"){
+					$("#usermanage-nav").removeClass("d-none");
+				}else {
+					$("#usermanage-nav").addClass("d-none");
+				}
+				$("#costmanage-nav").removeClass("d-none");
+				$("#apidata-form").removeClass("d-none");
+			} else {
+				$("#usermanage-nav").addClass("d-none");
+				$("#costmanage-nav").addClass("d-none");
+				$("#apidata-form").addClass("d-none");
+			}
+			
+			//================== start top bar ===============//
+			
 			if (me.avatar) {
 				$("#top-avatar").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}".replace("default.png", me.avatar));
 			} else {
@@ -183,16 +200,7 @@
 				localStorage.removeItem("me");
 				location.href = "/login";
 			});
-
-			//side bar
-			if(me?.role == "admin" || me?.role == "manager"){
-				$("#usermanage-nav").removeClass("d-none");
-			} else {
-				$("#usermanage-nav").addClass("d-none");
-			}
-		} else {
-				// window.location.href = "/login";
-		}
+		} 
 		//=============== end top bar ================//
 
 		//==================start signup, login ============//
@@ -426,8 +434,10 @@
 
 		$("#datafile-form").submit(function (event) {
 			event.preventDefault();
+			$("#fileaddbtn").prop('disabled', true);
+			$("#fileaddbtn").text("ファイルをロードしています。");
 			var formData = new FormData($(this)[0]);
-						
+			
 			$.ajax({
 				type: "POST",
 				url: "/cost-file",
@@ -435,10 +445,10 @@
 				contentType: false,
 				processData: false,
 				success: function (response) {
-                    console.log(response.data);
-                    
+					
 					if (response.status == "success") {
-						$("#fileaddbtn").text("データフ追加(Excelァイル)");
+						$("#fileaddbtn").prop('disabled', false);
+						$("#fileaddbtn").text("データフ追加(Excelファイル)");
 						$("#datafile").val("");
 						$("#fileaddbtn").attr("type", "button");                        
 						localStorage.removeItem('costData');

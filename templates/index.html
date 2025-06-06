@@ -67,30 +67,7 @@
 			<!-- right side of the page with the sparkline graphs -->
 			<!-- col -->
 			<div class="col-xs-12 col-sm-5 col-md-5 col-lg-8">
-				<!-- sparks -->
-				<ul id="sparks">
-					<li class="sparks-info">
-						<h5> My Income <span class="txt-color-blue">$47,171</span></h5>
-						<div class="sparkline txt-color-blue hidden-mobile hidden-md hidden-sm">
-							1300, 1877, 2500, 2577, 2000, 2100, 3000, 2700, 3631, 2471, 2700, 3631, 2471
-						</div>
-					</li>
-					<li class="sparks-info">
-						<h5> Site Traffic <span class="txt-color-purple"><i class="fa fa-arrow-circle-up"
-									data-rel="bootstrap-tooltip" title="Increased"></i>&nbsp;45%</span></h5>
-						<div class="sparkline txt-color-purple hidden-mobile hidden-md hidden-sm">
-							110,150,300,130,400,240,220,310,220,300, 270, 210
-						</div>
-					</li>
-					<li class="sparks-info">
-						<h5> Site Orders <span class="txt-color-greenDark"><i
-									class="fa fa-shopping-cart"></i>&nbsp;2447</span></h5>
-						<div class="sparkline txt-color-greenDark hidden-mobile hidden-md hidden-sm">
-							110,150,300,130,400,240,220,310,220,300, 270, 210
-						</div>
-					</li>
-				</ul>
-				<!-- end sparks -->
+				
 			</div>
 			<!-- end col -->
 
@@ -111,21 +88,19 @@
 
 				<!-- NEW WIDGET START -->
 				<article class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
-					<div class="d-flex justify-space-around align-items-center mb-3">
+					<div id="btn-bar" class="d-flex justify-space-around align-items-center mb-3">
 						<form id="datafile-form" class="smart-form" enctype="multipart/form-data">
 							<button type="button" id="fileaddbtn"
-								class="btn btn-success p-2 round">データフ追加(CSVァイル)</button>
+								class="btn btn-success p-2 round">データフ追加(CSVファイル)</button>
 							<input type="file" id="datafile" name="datafile" class="input-xs" style="display: none;"
 								accept=".xls, .xlsx" multiple />
 						</form>
-						<form id="apidata-form" class="smart-form" enctype="multipart/form-data">
-							<button type="button" id="fileaddbtn"
+						<form id="apidata-form" class="smart-form d-none" enctype="multipart/form-data">
+							<button type="button" id="apiaddbtn"
 								class="btn btn-success p-2 round">データ追加(API利用)</button>
-							<input type="file" id="datafile" name="datafile" class="input-xs" style="display: none;" />
 						</form>
-						<form id="apidata-form" class="smart-form" enctype="multipart/form-data">
-							<button type="button" id="fileaddbtn" class="btn btn-success p-2 round">データ追加(保管資料)</button>
-							<input type="file" id="datafile" name="datafile" class="input-xs" style="display: none;" />
+						<form id="basedata-form" class="smart-form" enctype="multipart/form-data">
+							<button type="button" id="baseaddbtn" class="btn btn-success p-2 round">データ追加(保管資料)</button>
 						</form>
 						<button type="button" id="dataremove" class="btn btn-danger p-2 round">データ削除</button>
 					</div>

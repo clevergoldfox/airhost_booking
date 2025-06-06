@@ -1,0 +1,12 @@
+{
+    "apps": [
+      {
+        "name": "flask-app",
+        "script": "app.py",
+        "interpreter": "./venv/bin/python",
+        "env": {
+          "FLASK_APP": "app.py"
+        }
+      }
+    ]
+  }

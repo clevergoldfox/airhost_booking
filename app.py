@@ -150,7 +150,7 @@ def operation():
 
             return jsonify({'status': 'success', 'data': json.dumps(ope_data, ensure_ascii=False)})
         except Exception as e:
-            return jsonify({'status': 'success', 'data': json.dumps([])})
+            return jsonify({'status': 'success', 'data': json.dumps(e)})
 
 
 
@@ -259,4 +259,4 @@ def cost_file():
 # =================== Boot server ========================
 
 if __name__ == "__main__":
-    flask_app.run(host="127.0.0.1", port=80, debug=False, use_reloader=False)
+    flask_app.run(host="127.0.0.1", port=7000, debug=False, use_reloader=False)
