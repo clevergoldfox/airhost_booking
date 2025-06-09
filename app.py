@@ -137,6 +137,7 @@ def operation():
 
             excel_data = pd.read_excel(file, sheet_name=None)
             # Columns to extract
+            print(excel_data)
             columns_to_extract = ['部屋番号', 'マンスリー+民泊', 'マンスリー', '民泊使用日数']
 
             ope_data = {}
@@ -146,7 +147,6 @@ def operation():
                     df = df.where(pd.notnull(df), None)
                     exclude_indices = {17, 18, 19, 20}
                     ope_data[sheet_name] = [item for idx, item in enumerate(df[existing_cols].values.tolist()[:27]) if idx not in exclude_indices]
-            print("ope_data")
 
             return jsonify({'status': 'success', 'data': json.dumps(ope_data, ensure_ascii=False)})
         except Exception as e:
@@ -259,4 +259,4 @@ def cost_file():
 # =================== Boot server ========================
 
 if __name__ == "__main__":
-    flask_app.run(host="127.0.0.1", port=7000, debug=False, use_reloader=False)
+    flask_app.run(host="127.0.0.1", port=80, debug=False, use_reloader=False)
