@@ -4,6 +4,7 @@ import eventlet
 import eventlet.wsgi
 from flask import Flask, Response, send_from_directory, render_template, request, send_file, jsonify
 import pandas as pd
+from collections import defaultdict
 from datetime import datetime
 import time
 import os
@@ -13,6 +14,9 @@ import re
 import json
 
 from controllers.users import create_user, get_users, edit_user, del_user, login_user 
+from controllers.reservations import insert_reservations, get_reservations
+from controllers.calendar import insert_calendar, get_calendar
+from controllers.operations import insert_operations
 # from controllers.costs import create_cost, get_costs
 
 # -------------------------------
@@ -137,16 +141,57 @@ def operation():
 
             excel_data = pd.read_excel(file, sheet_name=None)
             # Columns to extract
-            print(excel_data)
             columns_to_extract = ['部屋番号', 'マンスリー+民泊', 'マンスリー', '民泊使用日数']
 
+
             ope_data = {}
+            month_groups = defaultdict(list)
             for sheet_name, df in excel_data.items():
+                month_key = sheet_name[:6]  # Extract YYYYMM
+                month_groups[month_key].append(sheet_name)
                 existing_cols = [col for col in columns_to_extract if col in df.columns]
                 if existing_cols:
                     df = df.where(pd.notnull(df), None)
                     exclude_indices = {17, 18, 19, 20}
                     ope_data[sheet_name] = [item for idx, item in enumerate(df[existing_cols].values.tolist()[:27]) if idx not in exclude_indices]
+
+
+            # Get the last date in each month
+            last_dates = [max(dlist) for dlist in month_groups.values()]
+
+            last_dates.sort()
+
+            print(last_dates)
+            operation_data = []
+            for last_date in last_dates:
+                for item in ope_data[last_date]:
+                    operation_data.append({
+                        "roomId": item[0],
+                        "year": int(last_date[:4]),
+                        "month": int(last_date[4:6]),
+                        "sum": item[1] or 0,
+                        "monthly": item[2] or 0,
+                        "bnb": item[3] or 0
+                    })
+
+
+
+            # operation_year = list(ope_data.keys())[0]
+            # # operation_data = ope_data[first_key]
+            # operation_data = [
+            #     {
+            #         "roomId": item[0],
+            #         "year": int(operation_year[:4]),
+            #         "date": operation_year[4:5],
+            #         "sum": item[1] or 0,
+            #         "monthly": item[2] or 0,
+            #         "bnb": item[3] or 0
+            #     }
+            #     for item in ope_data[operation_year]
+            # ]
+            insert_operations(operation_data)
+
+            print(operation_data)   
 
             return jsonify({'status': 'success', 'data': json.dumps(ope_data, ensure_ascii=False)})
         except Exception as e:
@@ -167,13 +212,25 @@ def reservation():
             pre_data = []
             file.stream.seek(0)  # reset file pointer
             file_content = csv.reader(file.stream.read().decode('utf-8-sig').splitlines())
+            content = list(file_content)
+            # keys = content[0]
+            # keys = ["otaSite", "channelId", "airhostId", "checkIn", "checkOut", "roomName", "roomTag", "roomId", "guest", "phone", "email", "nationality", "guestAdd", "state", "checkInState", "paid", "numberOfGuests", "totalDays", "bookDate", "currency", "sale", "otaFee", "payOut","paidSubsidy", "otaPaid", "credit", "cash", "unCollect", "cleanFee", "supportFee", "comment", "pricingPlan", "adult", "kids", "explain", "payFee", "cancel", "bookEngineCoupon", "guestName", "updated", "infant", "pin"]
+            keys = content[0]
+            # print(keys)
+            values = content[1:]
+            reservations = [dict(zip(keys, value)) for value in values]
+            # print(reservations)
+            reservations_data = json.dumps(reservations, ensure_ascii=False, indent=2)
+            # insert_reservations(reservations)
+            insert_calendar(reservations)
 
-            return jsonify({'status': 'success', 'data': list(file_content)})
+            return jsonify({'status': 'success', 'data': content})
         except Exception as e:
             return jsonify({'status': 'success', 'data': list([])})
-
-    return render_template('reservation.html')
     if request.method == 'GET':
+        reservations = get_reservations()
+        print(reservations)
+        # return render_template('reservation.html', reservations=reservations)
         return render_template('reservation.html')
 
 # =================== end reservation-data manage ========================

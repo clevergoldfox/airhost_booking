@@ -18,13 +18,13 @@
  * - BODY
  * - CUSTOM STYLES
  */
- 
- body {
-     overflow-x: hidden;
- }
- 
- /* data table scroll-x-direction */
- 
+
+body {
+    overflow-x: hidden;
+}
+
+/* data table scroll-x-direction */
+
 #dt_basic_wrapper {
     width: 100%;
     display: flex;
@@ -55,10 +55,10 @@ td:nth-of-type(1) {
     z-index: 1000;
 }
 
-#calendar-thead tr:nth-of-type(2) th:nth-of-type(1){
+#calendar-thead tr:nth-of-type(2) th:nth-of-type(1) {
     position: relative;
     background-color: rgb(240, 237, 237);
-    z-index: 1!important;
+    z-index: 1 !important;
 }
 
 #calendar-thead tr th {
@@ -66,31 +66,35 @@ td:nth-of-type(1) {
     text-align: center;
 }
 
-#dt_basic_paginate ul li:hover{
+#dt_basic_paginate ul li:hover {
     cursor: pointer;
 }
 
-#opedate_paginate ul li:hover{
+#opedate_paginate ul li:hover {
     cursor: pointer;
 }
 
-.nodatathead{
-    font-weight: 600; 
-    width: 100%; 
+.nodatathead {
+    font-weight: 600;
+    width: 100%;
     text-align: center;
 }
 
 .d-flex {
-    display: flex!important;
+    display: flex !important;
 }
 
 .flex-column {
     display: flex;
-    flex-direction: column!important;
+    flex-direction: column !important;
 }
 
 .d-none {
-    display: none!important;
+    display: none !important;
+}
+
+.w-full {
+    width: 100% !important;
 }
 
 .justify-space-around {
@@ -109,42 +113,42 @@ td:nth-of-type(1) {
     align-items: center;
 }
 
-.m-0{
-    margin: 0!important;
+.m-0 {
+    margin: 0 !important;
 }
 
-.mx-5px{
-    margin-left: 5px!important;
-    margin-right: 5px!important;
+.mx-5px {
+    margin-left: 5px !important;
+    margin-right: 5px !important;
 }
 
 .mb-3 {
-    margin-bottom: 1rem!important;
+    margin-bottom: 1rem !important;
 }
 
 .mb-4 {
-    margin-bottom: 2rem!important;
+    margin-bottom: 2rem !important;
 }
 
 .ml-3 {
-    margin-left: 1rem!important;
+    margin-left: 1rem !important;
 }
 
 .p-2 {
-    padding: 0.5rem!important;
+    padding: 0.5rem !important;
 }
 
-.px-7px{
-    padding-left: 7px!important;
-    padding-right: 7px!important;
+.px-7px {
+    padding-left: 7px !important;
+    padding-right: 7px !important;
 }
 
 .round {
-    border-radius: 0.25rem!important;
+    border-radius: 0.25rem !important;
 }
 
 #regist-main {
-    margin:0;
+    margin: 0;
     align-items: center;
     justify-content: center;
     justify-items: center;
@@ -163,7 +167,7 @@ td:nth-of-type(1) {
     border-color: #007bff;
 }
 
-.dropdown-menu li{
+.dropdown-menu li {
     padding: 5px 20px;
     cursor: pointer;
     border-bottom: 1px solid #ddd;
@@ -198,4 +202,118 @@ td {
 .ope-td:hover {
     background-color: #cceb84;
     scale: 1.05;
+}
+
+.index-left {
+    height: 100vh;
+    background: url("../img/hotel.jpg") no-repeat center/cover;
+    position: relative;
+}
+
+.index-left::after {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 0;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+    transition: all ease-in-out .1s;
+}
+
+.index-left:hover::after {
+    height: 100%;
+}
+
+.index-left #dashboard-button {
+    position: absolute;
+    top: -10%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: none;
+    border: none;
+    font-size: 3.5rem;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 5px;
+    z-index: 2;
+    transition: all ease-in-out .3s;
+}
+
+.index-left #dashboard-button a {
+    color: white;
+    background: none;
+    text-decoration: none;
+}
+
+.index-left:hover #dashboard-button {
+    top: 50%;
+}
+
+.index-left #dashboard-button:hover {
+    font-size: 4.5rem;
+}
+
+.index-right {
+    color: #000;
+}
+
+#login-form label {
+    font-weight: 600;
+    color: #000;
+}
+
+#login-form .form-section {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    
+}
+
+#login-form input {
+    padding: 10px 20px;
+    border: none;
+    border-bottom: 1px solid #ccc;
+    font-size: medium;
+}
+
+.password-container {
+    position: relative;
+    width: fit-content;
+}
+
+.password-container input[type="password"],
+.password-container input[type="text"] {
+    padding-right: 2.5rem;
+    /* Add space for the icon */
+}
+
+.passhinttoogle {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #666;
+}
+
+/* preview page */
+
+.preview {
+    height: 95vh;
+    background: url("../img/hotel.jpg") no-repeat center/cover;
+    opacity: 0.6;
+    position: relative;
+}
+
+.preview h1 {
+    font-size: 40px;
+    text-align: center;
+    top: 50%;
+    width: 100%;
+    position: absolute;
+    color: white;
+    font-weight: 600;
+    text-shadow: 4px 4px black;
 }

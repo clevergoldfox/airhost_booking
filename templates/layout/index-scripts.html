@@ -1,0 +1,61 @@
+<script type="text/javascript">
+
+	$(document).ready(function () {
+
+		pageSetUp();
+		var me = {};
+		if(localStorage.getItem("me")){
+			const medata = JSON.parse(localStorage.getItem("me"));
+			me = {
+				"id": medata['id'],
+				"firstname": medata['firstname'],
+				"lastname": medata['lastname'],
+				"gender": medata['gender'],
+				"birth": medata['birth'],
+				"email": medata['email'],
+				"role": medata['role'],
+				"avatar": medata['avatar']
+			};
+		} else{
+			location.href = "/login";
+		}
+		if (me){
+			if(me?.role == "admin" || me?.role == "manager"){
+				if(me?.role == "admin"){
+					$("#usermanage-nav").removeClass("d-none");
+				}else {
+					$("#usermanage-nav").addClass("d-none");
+				}
+				$("#costmanage-nav").removeClass("d-none");
+				$("#apidata-form").removeClass("d-none");
+			} else {
+				$("#usermanage-nav").addClass("d-none");
+				$("#costmanage-nav").addClass("d-none");
+				$("#apidata-form").addClass("d-none");
+			}
+			
+			//================== start top bar ===============//
+			
+			if (me.avatar) {
+				$("#top-avatar").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}".replace("default.png", me.avatar));
+			} else {
+				$("#top-avatar").attr("src", "{{ url_for('static', filename='img/avatars/default.png')}}");
+			}
+			$("#top-name").text(me.firstname && me.lastname ? me.firstname + " " + me.lastname + "さん" : "ユーザーさん");
+	
+			$("#profileedit").click(async function () {
+				location.href = await "/profile";
+			});
+			$("#logout").click(function () {
+				localStorage.removeItem("me");
+				location.href = "/login";
+			});
+		} 	
+		
+	});
+
+</script>
+
+</body>
+
+</html>
